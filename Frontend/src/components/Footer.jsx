@@ -84,7 +84,7 @@ const Footer = () => {
             {/* Copyright */}
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <span className="text-orange-500 font-bold text-xl">minilink</span>
-              <span className="text-gray-400">© 2025 MiniLink | Handmade in New York City, Denver, Berlin, and all over the world.</span>
+              <span className="text-gray-400">© 2025 MiniLink</span>
             </div>
 
             {/* Social Media */}
@@ -112,18 +112,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Compliance Badges */}
-          <div className="flex flex-wrap justify-center md:justify-end space-x-4 mt-6">
-            <div className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium">
-              GDPR COMPLIANT
-            </div>
-            <div className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium">
-              CCPA COMPLIANT
-            </div>
-            <div className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium">
-              AICPA SOC 2 TYPE 2
-            </div>
-          </div>
+          
         </div>
       </div>
     </footer>
