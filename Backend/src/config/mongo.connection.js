@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-console.log(process.env.MONGO_URL);
 
 const connectDB = async () => {
     try {
-        const connectionInstance = await mongoose.connect(process.env.MONGO_URL);
+        const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URL || 'mongodb://localhost:27017/minilink';
+        const connectionInstance = await mongoose.connect(mongoURI);
         console.log(`MongoDB Connected: ${connectionInstance.connection.host}`);
     } catch (error) {
-        console.error("Error Msg: ", error);
+        console.error("Error connecting to MongoDB: ", error);
         process.exit(1);
     }
 }
