@@ -1,6 +1,7 @@
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Header from '../components/Header'
 import UrlForm from '../components/UrlForm'
 import TestimonialsSection from '../components/TestimonialsSection'
 import FloatingCTA from '../components/FloatingCTA'
@@ -8,6 +9,9 @@ import FloatingCTA from '../components/FloatingCTA'
 const HomePage = () => {
   return (
     <div className="min-h-screen">
+      {/* Bitly-style Header */}
+      <Header />
+      
       {/* URL Shortener Section */}
       <div className="relative py-20 overflow-hidden">
         {/* Background Gradient */}

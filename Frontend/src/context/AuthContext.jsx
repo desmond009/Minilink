@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
+import { API_ENDPOINTS } from '../api/config'
 
 const AuthContext = createContext()
 
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       if (token) {
         try {
-          const response = await axios.get('http://localhost:3000/api/auth/profile')
+          const response = await axios.get(API_ENDPOINTS.AUTH.PROFILE)
           setUser(response.data.data)
         } catch (error) {
           console.error('Auth check failed:', error)
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
+      const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, {
         email,
         password
       })
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/register', {
+      const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, {
         name,
         email,
         password
@@ -97,7 +98,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (userData) => {
     try {
-      const response = await axios.put('http://localhost:3000/api/auth/profile', userData)
+      const response = await axios.put(API_ENDPOINTS.AUTH.PROFILE, userData)
       setUser(response.data.data)
       return { success: true }
     } catch (error) {
@@ -110,7 +111,7 @@ export const AuthProvider = ({ children }) => {
 
   const changePassword = async (currentPassword, newPassword) => {
     try {
-      await axios.put('http://localhost:3000/api/auth/change-password', {
+      await axios.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
         currentPassword,
         newPassword
       })

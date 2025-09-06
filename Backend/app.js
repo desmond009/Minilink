@@ -20,6 +20,15 @@ import AuthRoute from './src/routes/auth.routes.js';
 app.use("/api/auth", AuthRoute);
 app.use("/api/create", UrlRoute);
 
+// Health check route
+app.get("/", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "MiniLink API is running",
+    version: "1.0.0"
+  });
+});
+
 // Redirect route - this should be last
 app.get("/:short_id", redirectFromShortUrl);
 
@@ -59,4 +68,3 @@ const startServer = async () => {
 };
 
 startServer();
-

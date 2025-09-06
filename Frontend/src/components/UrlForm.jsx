@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { useAuth } from '../context/AuthContext'
+import { useTempLinks } from '../context/TempLinksContext'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { useQueryClient } from '@tanstack/react-query'
 import QRCodeGenerator from './QRCodeGenerator'
 import QRCodeScanner from './QRCodeScanner'
 
@@ -13,25 +15,66 @@ const UrlForm = () => {
   const [activeTab, setActiveTab] = useState('shortlink')
   const [showQRCode, setShowQRCode] = useState(false)
   const [showScanner, setShowScanner] = useState(false)
+  
+  const { isAuthenticated, user } = useAuth()
+  const { 
+    tempLinks, 
+    addTempLink, 
+    canCreateTempLink, 
+    getRemainingLinks, 
+    MAX_TEMP_LINKS 
+  } = useTempLinks()
+  const navigate = useNavigate()
 
-  const queryClient = useQueryClient()
+  // Generate a simple short ID for temp links
+  const generateShortId = () => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase()
+  }
 
   // Handle URL shortening
   const handleShortUrl = async (e) => {
     e.preventDefault()
+    
+    // Check if user can create temp links
+    if (!isAuthenticated && !canCreateTempLink()) {
+      toast.info(`You can create up to ${MAX_TEMP_LINKS} links without login. Please login to create more links.`)
+      navigate('/login')
+      return
+    }
+    
     setIsLoading(true)
 
     try {
-      const { data } = await axios.post("http://localhost:8000/api/create", { url: longUrl })
-      setShortUrl(data.URL)
-      toast.success('URL shortened successfully!')
+      if (isAuthenticated) {
+        // Create permanent link with authentication
+        const { data } = await axios.post("http://localhost:3000/api/create", { 
+          originalUrl: longUrl 
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        
+        setShortUrl(data.data.shortUrl)
+        toast.success('URL shortened successfully!')
+      } else {
+        // Create temporary link
+        const shortId = generateShortId()
+        const tempShortUrl = `http://localhost:3000/${shortId}`
+        
+        // Add to temp links
+        addTempLink(longUrl, tempShortUrl, shortId)
+        setShortUrl(tempShortUrl)
+        toast.success('URL shortened successfully! (Temporary - login to save permanently)')
+      }
       
       // If QR Code tab is active, show QR code modal
       if (activeTab === 'qrcode') {
         setShowQRCode(true)
       }
     } catch (error) {
-      toast.error('Failed to shorten URL. Please try again.')
+      console.error('Error creating short URL:', error)
+      toast.error(error.response?.data?.message || 'Failed to shorten URL. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -70,9 +113,65 @@ const UrlForm = () => {
     }
   }
 
+  // Redirect to dashboard if authenticated
+  const handleGoToDashboard = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard')
+    } else {
+      navigate('/login')
+    }
+  }
+
+  const remainingLinks = getRemainingLinks()
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-xl p-8">
+        {/* Authentication Status */}
+        {isAuthenticated ? (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-green-700 font-medium">Welcome back, {user?.name}! Create unlimited links.</span>
+              </div>
+              <button
+                onClick={handleGoToDashboard}
+                className="text-green-600 hover:text-green-800 font-medium text-sm"
+              >
+                Go to Dashboard →
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <span className="text-blue-700">
+                  You can create {remainingLinks} more temporary links. 
+                  <button 
+                    onClick={() => navigate('/login')}
+                    className="text-blue-600 hover:text-blue-800 font-medium ml-1"
+                  >
+                    Login
+                  </button> to create unlimited links.
+                </span>
+              </div>
+              <button
+                onClick={() => navigate('/login')}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Toggle Buttons */}
         <div className="flex justify-center mb-8">
           <div className="bg-gray-100 rounded-lg p-1 flex">
@@ -125,7 +224,12 @@ const UrlForm = () => {
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
               {activeTab === 'shortlink' ? 'Shorten a long link' : 'Create QR Code for your link'}
             </h3>
-            <p className="text-gray-600">No credit card required.</p>
+            <p className="text-gray-600">
+              {isAuthenticated 
+                ? 'Create and manage your short links' 
+                : `Create temporary links (${remainingLinks} remaining)`
+              }
+            </p>
           </div>
 
           {/* Form */}
@@ -142,7 +246,7 @@ const UrlForm = () => {
                 onChange={(e) => setLongUrl(e.target.value)}
                 placeholder="https://example.com/my-long-url"
                 className="w-full px-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-lg"
-                disabled={isLoading}
+                disabled={isLoading || (!isAuthenticated && !canCreateTempLink())}
                 required
               />
             </div>
@@ -150,7 +254,7 @@ const UrlForm = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (!isAuthenticated && !canCreateTempLink())}
               className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
               {isLoading ? (
@@ -158,6 +262,8 @@ const UrlForm = () => {
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                   {activeTab === 'shortlink' ? 'Shortening URL...' : 'Generating QR Code...'}
                 </>
+              ) : !isAuthenticated && !canCreateTempLink() ? (
+                'Login to Create More Links'
               ) : (
                 <>
                   {activeTab === 'shortlink' ? 'Get your link for free' : 'Generate QR Code'}

@@ -15,13 +15,16 @@ const Header = () => {
   }
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className="bg-blue-900 relative">
+      {/* Top light blue strip */}
+      <div className="h-1 bg-blue-400"></div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-orange-500">minilink</span>
+              <span className="text-2xl font-bold text-orange-500" style={{ fontFamily: 'cursive' }}>MiniLink</span>
             </Link>
           </div>
 
@@ -29,7 +32,7 @@ const Header = () => {
           {/* Language Selector and Action Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <div className="relative">
-              <button className="flex items-center text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+              <button className="flex items-center text-white hover:text-gray-200 px-3 py-2 text-sm font-medium transition-colors">
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5a2 2 0 002 2 2 2 0 002 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5a2 2 0 002 2 2 2 0 002 2v1a2 2 0 002 2 2 2 0 012 2v2.945" />
                 </svg>
@@ -44,7 +47,7 @@ const Header = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+                  className="flex items-center text-white hover:text-gray-200 px-3 py-2 text-sm font-medium transition-colors"
                 >
                   <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-medium mr-2">
                     {user?.name?.charAt(0).toUpperCase()}
@@ -77,13 +80,13 @@ const Header = () => {
               <>
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+                  className="text-white hover:text-gray-200 px-3 py-2 text-sm font-medium transition-colors"
                 >
                   Log in
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                  className="bg-white text-blue-900 px-4 py-2 rounded text-sm font-medium hover:bg-gray-100 transition-colors"
                 >
                   Sign up Free
                 </Link>
@@ -95,7 +98,7 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900"
+              className="text-white hover:text-gray-200 focus:outline-none focus:text-gray-200"
             >
               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -106,29 +109,29 @@ const Header = () => {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden">
+          <div className="md:hidden bg-blue-800">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link to="/" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900">
+              <Link to="/" className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200">
                 Home
               </Link>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900">Platform</a>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900">Solutions</a>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900">Pricing</a>
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900">Resources</a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200">Platform</a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200">Solutions</a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200">Pricing</a>
+              <a href="#" className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200">Resources</a>
               
-              <div className="pt-4 pb-3 border-t border-gray-200">
+              <div className="pt-4 pb-3 border-t border-blue-700">
                 {isAuthenticated ? (
                   <>
                     <Link
                       to="/profile"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900"
+                      className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900"
+                      className="block w-full text-left px-3 py-2 text-base font-medium text-white hover:text-gray-200"
                     >
                       Logout
                     </button>
@@ -137,14 +140,14 @@ const Header = () => {
                   <>
                     <Link
                       to="/login"
-                      className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900"
+                      className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Log in
                     </Link>
                     <Link
                       to="/register"
-                      className="block px-3 py-2 text-base font-medium text-blue-600 hover:text-blue-800"
+                      className="block px-3 py-2 text-base font-medium text-white hover:text-gray-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Sign up Free

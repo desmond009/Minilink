@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const shortUrlSchema = new Schema({
-    short_url: {
+    short_id: {
         type: String,
         required: true,
         unique: true,
@@ -11,7 +11,7 @@ const shortUrlSchema = new Schema({
         type: String,
         required: true
     },
-    clicks: {
+    clickCount: {
         type: Number,
         required: true,
         default: 0
@@ -19,8 +19,10 @@ const shortUrlSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        required: true
     }
-}, {timestamps: true})
+}, { timestamps: true });
 
+const ShortUrl = mongoose.model("ShortUrl", shortUrlSchema);
 
-export const ShortUrl = mongoose.model("ShortUrl", shortUrlSchema);
+export default ShortUrl;

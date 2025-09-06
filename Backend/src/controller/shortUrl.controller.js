@@ -2,32 +2,63 @@ import { GenerateShort_URL_SERVICES } from "../services/shortUrl.services.js";
 import { redirect_From_Short_Url } from "../services/shortUrl.services.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import ShortUrl from "../model/shorturl.models.js";
 
 const GenerateShortUrl = asyncHandler(async (req, res) => {
+    const { originalUrl, customAlias } = req.body;
+    const userId = req.user._id;
 
-    const {url} = req.body
+    if (!originalUrl) {
+        throw new ApiError(400, "Original URL is required");
+    }
 
-    const new_URL = await GenerateShort_URL_SERVICES(url);
+    const new_URL = await GenerateShort_URL_SERVICES(originalUrl, userId, customAlias);
 
-    if(!new_URL){
-        throw new ApiError(400, "New URL not found")
+    if (!new_URL) {
+        throw new ApiError(400, "Failed to create short URL");
     }
 
     res.status(200).json({
         success: true,
-        URL: process.env.APP_URL + new_URL
-    })
-})
+        message: "Short URL created successfully",
+        data: {
+            shortId: new_URL.short_id,
+            originalUrl: new_URL.long_url,
+            shortUrl: `http://localhost:3000/${new_URL.short_id}`,
+            createdAt: new_URL.createdAt
+        }
+    });
+});
 
+const GetUserLinks = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+
+    const links = await ShortUrl.find({ user: userId })
+        .sort({ createdAt: -1 })
+        .select('short_id long_url createdAt clickCount');
+
+    res.status(200).json({
+        success: true,
+        message: "Links fetched successfully",
+        data: links
+    });
+});
 
 const redirectFromShortUrl = asyncHandler(async (req, res) => {
     const short_id = req.params.short_id;
-    const url = await redirect_From_Short_Url(short_id)
+    const url = await redirect_From_Short_Url(short_id);
 
-    if(!url){
-        throw new ApiError(400, "URL not found")
+    if (!url) {
+        throw new ApiError(404, "URL not found");
     }
-    res.redirect(url.long_url)
-})
 
-export {GenerateShortUrl, redirectFromShortUrl}
+    // Increment click count
+    await ShortUrl.findOneAndUpdate(
+        { short_id },
+        { $inc: { clickCount: 1 } }
+    );
+
+    res.redirect(url.long_url);
+});
+
+export { GenerateShortUrl, GetUserLinks, redirectFromShortUrl };
