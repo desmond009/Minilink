@@ -11,6 +11,9 @@ import FloatingButton from '../components/FloatingButton'
 import AnimatedCard from '../components/AnimatedCard'
 import { reliableCopy } from '../utils/clipboard'
 
+// Add a configurable base for short links. Defaults to production short domain
+const SHORT_BASE_URL = import.meta.env.VITE_SHORT_BASE_URL || 'https://mini.lk'
+
 const Dashboard = () => {
   const { user, logout } = useAuth()
   const { isDark, toggleTheme } = useTheme()
@@ -137,7 +140,7 @@ const Dashboard = () => {
                       transition={{ delay: 0.4 }}
                     >
                       <label className={`block text-xs font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                        🌐 Domain: localhost:3000
+                        🌐 Domain: {SHORT_BASE_URL}
                       </label>
                       <div className="relative">
                         <input
@@ -341,7 +344,7 @@ const Dashboard = () => {
                               {link.long_url}
                             </p>
                             <p className="text-sm font-bold text-blue-600 mb-1">
-                              localhost:3000/{link.short_id}
+                              {`${SHORT_BASE_URL}/${link.short_id}`}
                             </p>
                             <div className={`flex items-center space-x-3 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                               <span>📅 {new Date(link.createdAt).toLocaleDateString()}</span>
@@ -351,7 +354,7 @@ const Dashboard = () => {
                         </div>
                         <div className="flex items-center space-x-1">
                           <motion.button
-                            onClick={() => copyToClipboard(`localhost:3000/${link.short_id}`)}
+                            onClick={() => copyToClipboard(`${SHORT_BASE_URL}/${link.short_id}`)}
                             className={`p-2 ${isDark ? 'text-gray-400 hover:text-blue-400 hover:bg-gray-600/50' : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'} rounded-lg transition-all duration-200`}
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -424,7 +427,7 @@ const Dashboard = () => {
                       >
                         <div className="text-center">
                           <p className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-600'} mb-2 truncate`}>{link.long_url}</p>
-                          <p className="font-bold text-blue-600 mb-3 text-sm">localhost:3000/{link.short_id}</p>
+                          <p className="font-bold text-blue-600 mb-3 text-sm">{`${SHORT_BASE_URL}/${link.short_id}`}</p>
                           <motion.button
                             onClick={() => setShowQRCode(true)}
                             className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 px-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 font-medium text-xs"
