@@ -311,7 +311,7 @@ const UrlForm = () => {
                   value={longUrl}
                   onChange={(e) => setLongUrl(e.target.value)}
                   placeholder="https://example.com/my-long-url"
-                  className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all duration-200 text-lg bg-white/80 backdrop-blur-sm shadow-inner"
+                  className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all duration-200 text-lg text-gray-900 bg-white/80 backdrop-blur-sm shadow-inner"
                   disabled={isLoading || (!isAuthenticated && !canCreateTempLink())}
                   required
                 />
