@@ -24,7 +24,7 @@ const GenerateShortUrl = asyncHandler(async (req, res) => {
         data: {
             shortId: new_URL.short_id,
             originalUrl: new_URL.long_url,
-            shortUrl: `http://localhost:3000/${new_URL.short_id}`,
+            shortUrl: `${process.env.APP_URL}/${new_URL.short_id}`,
             createdAt: new_URL.createdAt
         }
     });

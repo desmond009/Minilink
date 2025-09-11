@@ -5,6 +5,15 @@ import { useNavigate } from 'react-router-dom'
 const PrivacyPolicy = () => {
   const navigate = useNavigate()
 
+  const handleBackClick = () => {
+    try {
+      navigate('/')
+    } catch (error) {
+      console.error('Navigation error:', error)
+      window.location.href = '/'
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="max-w-4xl mx-auto px-4 py-16">
@@ -14,8 +23,8 @@ const PrivacyPolicy = () => {
           transition={{ duration: 0.6 }}
         >
           <button
-            onClick={() => navigate('/')}
-            className="mb-8 text-blue-600 hover:text-blue-800 font-semibold flex items-center"
+            onClick={handleBackClick}
+            className="mb-8 text-blue-600 hover:text-blue-800 font-semibold flex items-center transition-colors duration-200"
           >
             ← Back to Home
           </button>
@@ -48,6 +57,24 @@ const PrivacyPolicy = () => {
               <p className="text-gray-700 leading-relaxed">
                 We do not sell, trade, or otherwise transfer your personal information to third parties 
                 without your consent, except as described in this policy.
+              </p>
+            </section>
+            
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Data Security</h2>
+              <p className="text-gray-700 leading-relaxed">
+                We implement appropriate security measures to protect your personal information against 
+                unauthorized access, alteration, disclosure, or destruction.
+              </p>
+            </section>
+            
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Contact Us</h2>
+              <p className="text-gray-700 leading-relaxed">
+                If you have any questions about this Privacy Policy, please contact us at 
+                <a href="mailto:privacy@minilink.com" className="text-blue-600 hover:text-blue-800 ml-1">
+                  privacy@minilink.com
+                </a>
               </p>
             </section>
           </div>
