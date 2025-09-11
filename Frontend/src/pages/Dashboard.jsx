@@ -9,6 +9,7 @@ import ThreeBackground from '../components/ThreeBackground'
 import AnimatedLogo from '../components/AnimatedLogo'
 import FloatingButton from '../components/FloatingButton'
 import AnimatedCard from '../components/AnimatedCard'
+import { reliableCopy } from '../utils/clipboard'
 
 const Dashboard = () => {
   const { user, logout } = useAuth()
@@ -227,7 +228,7 @@ const Dashboard = () => {
                             className={`flex-1 px-3 py-2 text-sm ${isDark ? 'bg-gray-800/80 border-gray-600 text-blue-400' : 'bg-white/80 border-blue-200 text-blue-600'} border-2 rounded-lg font-bold shadow-inner backdrop-blur-sm`}
                           />
                           <motion.button
-                            onClick={() => copyToClipboard(createdLink.shortUrl)}
+                            onClick={async () => { await reliableCopy(createdLink.shortUrl); }}
                             className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-semibold text-xs"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}

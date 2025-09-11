@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://minilink-fr8u.onrender.com/api/:path*" },
+    { "source": "/:short_id", "destination": "https://minilink-fr8u.onrender.com/:short_id" }
+  ],
+  "headers": [
+    {
+      "source": "/:path*",
+      "headers": [ { "key": "Cache-Control", "value": "no-store" } ]
+    }
+  ]
+}

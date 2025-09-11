@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import QRCodeGenerator from './QRCodeGenerator'
 import QRCodeScanner from './QRCodeScanner'
+import { reliableCopy } from '../utils/clipboard'
 
 const UrlForm = () => {
   const [longUrl, setLongUrl] = useState('')
@@ -84,9 +85,9 @@ const UrlForm = () => {
   // Copy short URL to clipboard
   const handleCopyUrl = async () => {
     try {
-      await navigator.clipboard.writeText(shortUrl)
+      await reliableCopy(shortUrl)
       setCopied(true)
-      toast.success('URL copied to clipboard!')
+      // toast handled by UI around helper
 
       // Reset copied state after 2 seconds
       setTimeout(() => setCopied(false), 2000)
