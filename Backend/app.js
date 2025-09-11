@@ -12,6 +12,8 @@ const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.tri
 
 const corsOptions = {
   origin: (origin, cb) => {
+    // If no whitelist configured, allow all
+    if (allowedOrigins.length === 0) return cb(null, true);
     if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
     return cb(new Error('Not allowed by CORS'));
   },
