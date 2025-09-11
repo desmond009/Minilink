@@ -8,6 +8,7 @@ import axios from 'axios'
 import QRCodeGenerator from './QRCodeGenerator'
 import QRCodeScanner from './QRCodeScanner'
 import { reliableCopy } from '../utils/clipboard'
+import API_BASE_URL from '../api/config'
 
 const UrlForm = () => {
   const [longUrl, setLongUrl] = useState('')
@@ -49,7 +50,7 @@ const UrlForm = () => {
     try {
       if (isAuthenticated) {
         // Create permanent link with authentication
-        const { data } = await axios.post(import.meta.env.VITE_API_URL + "/create", { 
+        const { data } = await axios.post(API_BASE_URL + "/create", { 
           originalUrl: longUrl 
         }, {
           headers: {

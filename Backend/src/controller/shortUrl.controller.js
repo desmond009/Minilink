@@ -18,13 +18,17 @@ const GenerateShortUrl = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Failed to create short URL");
     }
 
+    // Resolve base URL for returned shortUrl robustly
+    const requestBase = `${req.protocol}://${req.get('host')}`;
+    const baseUrl = process.env.APP_URL || requestBase || 'https://mini.lk';
+
     res.status(200).json({
         success: true,
         message: "Short URL created successfully",
         data: {
             shortId: new_URL.short_id,
             originalUrl: new_URL.long_url,
-            shortUrl: `${process.env.APP_URL}/${new_URL.short_id}`,
+            shortUrl: `${baseUrl}/${new_URL.short_id}`,
             createdAt: new_URL.createdAt
         }
     });
