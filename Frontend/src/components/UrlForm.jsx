@@ -48,7 +48,7 @@ const UrlForm = () => {
     try {
       if (isAuthenticated) {
         // Create permanent link with authentication
-        const { data } = await axios.post("http://localhost:3000/api/create", { 
+        const { data } = await axios.post(import.meta.env.VITE_API_URL + "/create", { 
           originalUrl: longUrl 
         }, {
           headers: {
@@ -61,7 +61,7 @@ const UrlForm = () => {
       } else {
         // Create temporary link
         const shortId = generateShortId()
-        const tempShortUrl = `http://localhost:3000/${shortId}`
+        const tempShortUrl = (import.meta.env.VITE_SHORT_BASE_URL || 'https://mini.lk') + `/${shortId}`
         
         // Add to temp links
         addTempLink(longUrl, tempShortUrl, shortId)

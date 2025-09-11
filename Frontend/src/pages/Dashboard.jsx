@@ -27,7 +27,7 @@ const Dashboard = () => {
   // Fetch user's links
   const fetchLinks = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/create/links', {
+      const response = await axios.get((import.meta.env.VITE_API_URL + '/create/links'), {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -55,7 +55,7 @@ const Dashboard = () => {
 
     setIsCreating(true)
     try {
-      const response = await axios.post('http://localhost:3000/api/create', {
+      const response = await axios.post((import.meta.env.VITE_API_URL + '/create'), {
         originalUrl: urlForm.originalUrl,
         customAlias: urlForm.customAlias || undefined
       }, {
