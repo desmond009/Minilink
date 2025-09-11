@@ -28,7 +28,7 @@ const GenerateShortUrl = asyncHandler(async (req, res) => {
         data: {
             shortId: new_URL.short_id,
             originalUrl: new_URL.long_url,
-            shortUrl: `${baseUrl}/${new_URL.short_id}`,
+            shortUrl: `${baseUrl}/r/${new_URL.short_id}`,
             createdAt: new_URL.createdAt
         }
     });

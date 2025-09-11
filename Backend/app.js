@@ -44,8 +44,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// Redirect route - this should be last
-app.get("/:short_id", redirectFromShortUrl);
+// Redirect route - now namespaced to avoid SPA route collisions
+app.get("/r/:short_id", redirectFromShortUrl);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
