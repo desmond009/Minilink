@@ -13,6 +13,7 @@ import Register from './components/Register'
 import Profile from './components/Profile'
 import PrivacyPolicy from './pages/legal/PrivacyPolicy'
 import About from './pages/company/About'
+import LoginSuccess from './components/LoginSuccess'
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -116,8 +117,8 @@ const AppContent = () => {
                 </PublicRoute>
               } 
             />
-            {/* OAuth redirects land here with ?token=... and AuthContext processes it */}
-            <Route path="/login/success" element={<div />} />
+            {/* OAuth redirects land here with ?token=... and LoginSuccess processes it */}
+            <Route path="/login/success" element={<LoginSuccess />} />
             <Route 
               path="/register" 
               element={
