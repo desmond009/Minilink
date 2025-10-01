@@ -39,8 +39,13 @@ const Login = () => {
   const startOAuth = async (provider) => {
     try {
       const endpoint = provider === 'google' ? API_ENDPOINTS.AUTH.GOOGLE_URL : API_ENDPOINTS.AUTH.APPLE_URL
-      // open in same tab for proper callback redirect handling
-      window.location.href = endpoint
+      const res = await fetch(endpoint, { credentials: 'include' })
+      const data = await res.json()
+      if (data?.success && data?.url) {
+        window.location.href = data.url
+      } else {
+        toast.error(data?.message || 'Failed to start social login')
+      }
     } catch (err) {
       toast.error('Failed to start social login')
     }
