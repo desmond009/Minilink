@@ -10,11 +10,48 @@ const app = express();
 
 const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
 
+// Helper to evaluate if an origin is allowed
+const isOriginAllowed = (origin) => {
+  // If no whitelist configured, allow all
+  if (allowedOrigins.length === 0) return true;
+  if (!origin) return true;
+
+  try {
+    const parsed = new URL(origin);
+    const originString = parsed.origin;
+    const hostname = parsed.hostname;
+
+    for (const pattern of allowedOrigins) {
+      if (!pattern) continue;
+      const p = pattern.trim();
+      if (p === '*') return true;
+
+      // Wildcard subdomain pattern, e.g., *.vercel.app
+      if (p.startsWith('*.')) {
+        const suffix = p.slice(1); // ".vercel.app"
+        if (hostname && hostname.endsWith(suffix)) return true;
+        continue;
+      }
+
+      // Exact origin match (with scheme)
+      if (p.startsWith('http://') || p.startsWith('https://')) {
+        if (originString === p) return true;
+        continue;
+      }
+
+      // Bare hostname match
+      if (hostname === p) return true;
+    }
+  } catch (_) {
+    // If origin is malformed, deny by default below
+  }
+
+  return false;
+};
+
 const corsOptions = {
   origin: (origin, cb) => {
-    // If no whitelist configured, allow all
-    if (allowedOrigins.length === 0) return cb(null, true);
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    if (isOriginAllowed(origin)) return cb(null, true);
     return cb(new Error('Not allowed by CORS'));
   },
   methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
