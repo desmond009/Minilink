@@ -8,7 +8,9 @@ export const API_ENDPOINTS = {
     REGISTER: `${API_BASE_URL}/auth/register`,
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     PROFILE: `${API_BASE_URL}/auth/profile`,
-    CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`
+    CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
+    GOOGLE_URL: `${API_BASE_URL}/oauth/google/url`,
+    APPLE_URL: `${API_BASE_URL}/oauth/apple/url`
   },
   
   // URL endpoints

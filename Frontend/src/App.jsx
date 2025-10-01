@@ -116,6 +116,8 @@ const AppContent = () => {
                 </PublicRoute>
               } 
             />
+            {/* OAuth redirects land here with ?token=... and AuthContext processes it */}
+            <Route path="/login/success" element={<div />} />
             <Route 
               path="/register" 
               element={

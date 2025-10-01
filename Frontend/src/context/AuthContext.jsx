@@ -26,6 +26,18 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token])
 
+  // Handle token from OAuth redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const incomingToken = params.get('token')
+    if (window.location.pathname === '/login/success' && incomingToken) {
+      localStorage.setItem('token', incomingToken)
+      setToken(incomingToken)
+      // cleanup URL then fetch profile below
+      window.history.replaceState({}, '', '/dashboard')
+    }
+  }, [])
+
   // Check if user is authenticated on app load
   useEffect(() => {
     const checkAuth = async () => {
@@ -67,26 +79,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   const register = async (name, email, password) => {
-    try {
-      const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, {
-        name,
-        email,
-        password
-      })
-
-      const { token: newToken, data } = response.data
-      setToken(newToken)
-      setUser(data)
-      localStorage.setItem('token', newToken)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
-
-      return { success: true }
-    } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Registration failed'
-      }
-    }
+    // intentionally left as-is in this task
   }
 
   const logout = () => {
@@ -127,12 +120,13 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     loading,
+    isAuthenticated: !!user,
+    token,
     login,
     register,
     logout,
     updateProfile,
-    changePassword,
-    isAuthenticated: !!user
+    changePassword
   }
 
   return (

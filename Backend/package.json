@@ -21,6 +21,8 @@
     "mongodb": "^6.19.0",
     "mongoose": "^8.15.2",
     "nanoid": "^5.1.5",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "google-auth-library": "^9.14.2",
+    "apple-signin-auth": "^1.7.6"
   }
 }

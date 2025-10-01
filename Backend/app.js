@@ -30,9 +30,11 @@ app.use(express.urlencoded({ extended: true }));
 // Import routes
 import UrlRoute from './src/routes/shortUrl.routes.js';
 import AuthRoute from './src/routes/auth.routes.js';
+import OAuthRoute from './src/routes/oauth.routes.js';
 
 // API Routes
 app.use("/api/auth", AuthRoute);
+app.use("/api/oauth", OAuthRoute);
 app.use("/api/create", UrlRoute);
 
 // Health check route

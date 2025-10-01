@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { toast } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
+import { API_ENDPOINTS } from '../api/config'
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -35,8 +36,14 @@ const Login = () => {
     setLoading(false)
   }
 
-  const handleSocialLogin = (provider) => {
-    toast.info(`${provider} login coming soon!`)
+  const startOAuth = async (provider) => {
+    try {
+      const endpoint = provider === 'google' ? API_ENDPOINTS.AUTH.GOOGLE_URL : API_ENDPOINTS.AUTH.APPLE_URL
+      // open in same tab for proper callback redirect handling
+      window.location.href = endpoint
+    } catch (err) {
+      toast.error('Failed to start social login')
+    }
   }
 
   return (
@@ -65,7 +72,7 @@ const Login = () => {
           {/* Social Login Buttons */}
           <div className="space-y-3 mb-6">
             <button
-              onClick={() => handleSocialLogin('Google')}
+              onClick={() => startOAuth('google')}
               className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -78,7 +85,7 @@ const Login = () => {
             </button>
 
             <button
-              onClick={() => handleSocialLogin('Apple')}
+              onClick={() => startOAuth('apple')}
               className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
@@ -88,7 +95,7 @@ const Login = () => {
             </button>
 
             <button
-              onClick={() => handleSocialLogin('SSO')}
+              onClick={() => toast.info('SSO login coming soon!')}
               className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
