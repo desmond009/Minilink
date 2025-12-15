@@ -9,8 +9,8 @@ import FooterNew from './components/FooterNew'
 import HomePage from './pages/HomePage'
 import HomePageNew from './pages/HomePageNew'
 import Dashboard from './pages/Dashboard'
-import Login from './components/Login'
-import Register from './components/Register'
+import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import Profile from './components/Profile'
 import PrivacyPolicy from './pages/legal/PrivacyPolicy'
 import About from './pages/company/About'
@@ -133,7 +133,7 @@ const AppContent = () => {
               path="/login" 
               element={
                 <PublicRoute>
-                  <Login />
+                  <LoginPage />
                 </PublicRoute>
               } 
             />
@@ -143,7 +143,15 @@ const AppContent = () => {
               path="/register" 
               element={
                 <PublicRoute>
-                  <Register />
+                  <SignupPage />
+                </PublicRoute>
+              } 
+            />
+            <Route 
+              path="/signup" 
+              element={
+                <PublicRoute>
+                  <SignupPage />
                 </PublicRoute>
               } 
             />
