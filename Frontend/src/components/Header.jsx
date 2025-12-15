@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import { Link, useNavigate } from 'react-router-dom'
-import HeaderFX from './HeaderFX'
+import { Github, Sun, Moon, Menu, X, LogOut, User, LayoutDashboard } from 'lucide-react'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
-  const [selectedLanguage, setSelectedLanguage] = useState('EN')
   const { user, logout, isAuthenticated } = useAuth()
+  const { isDark, toggleTheme } = useTheme()
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -18,23 +18,12 @@ const Header = () => {
     navigate('/')
   }
 
-  const languages = [
-    { code: 'EN', name: 'English', flag: '🇺🇸' },
-    { code: 'ES', name: 'Español', flag: '🇪🇸' },
-    { code: 'FR', name: 'Français', flag: '🇫🇷' },
-    { code: 'DE', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'IT', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'PT', name: 'Português', flag: '🇵🇹' },
-    { code: 'JA', name: '日本語', flag: '🇯🇵' },
-    { code: 'KO', name: '한국어', flag: '🇰🇷' },
-    { code: 'ZH', name: '中文', flag: '🇨🇳' }
-  ]
-
   return (
-    <header className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 relative shadow-lg">
-      <HeaderFX />
-      {/* Top light blue strip */}
-      <div className="h-1 bg-gradient-to-r from-blue-400 to-cyan-400"></div>
+    <header className={`sticky top-0 z-50 backdrop-blur-xl border-b transition-colors duration-300 ${
+      isDark 
+        ? 'bg-slate-900/80 border-slate-700/50' 
+        : 'bg-white/80 border-slate-200/50'
+    }`}>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">

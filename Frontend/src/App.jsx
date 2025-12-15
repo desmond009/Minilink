@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { TempLinksProvider } from './context/TempLinksContext'
-import { ThemeProvider } from './context/ThemeContext'
-import Header from './components/Header'
-import Footer from './components/Footer'
+import { ThemeProvider, useTheme } from './context/ThemeContext'
+import Navbar from './components/Navbar'
+import FooterNew from './components/FooterNew'
 import HomePage from './pages/HomePage'
+import HomePageNew from './pages/HomePageNew'
 import Dashboard from './pages/Dashboard'
 import Login from './components/Login'
 import Register from './components/Register'
@@ -83,24 +84,43 @@ const PublicRoute = ({ children }) => {
 }
 
 // Simple page wrapper for footer links
-const SimplePage = ({ title, children }) => (
-  <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-    <div className="max-w-4xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">{title}</h1>
-      <div className="bg-white rounded-2xl shadow-xl p-8">
-        {children}
+const SimplePage = ({ title, children }) => {
+  const { isDark } = useTheme()
+  return (
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
+      isDark ? 'bg-slate-900' : 'bg-white'
+    }`}>
+      <Navbar />
+      <div className={`flex-1 py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
+        isDark ? 'bg-slate-900' : 'bg-slate-50'
+      }`}>
+        <div className="max-w-4xl mx-auto">
+          <h1 className={`text-4xl md:text-5xl font-bold mb-8 ${
+            isDark
+              ? 'bg-gradient-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
+              : 'bg-gradient-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
+          }`}>
+            {title}
+          </h1>
+          <div className={`rounded-2xl shadow-xl p-8 transition-colors duration-300 ${
+            isDark ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-slate-200'
+          }`}>
+            {children}
+          </div>
+        </div>
       </div>
+      <FooterNew />
     </div>
-  </div>
-)
+  )
+}
 
 const AppContent = () => {
   return (
     <ErrorBoundary>
       <Router>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 transition-colors duration-300">
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePageNew />} />
             <Route 
               path="/dashboard" 
               element={
