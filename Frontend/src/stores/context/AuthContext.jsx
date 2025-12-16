@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
-import { API_ENDPOINTS } from '../api/config'
+import { API_ENDPOINTS } from '../../api/config'
 
 const AuthContext = createContext()
 
@@ -79,7 +79,26 @@ export const AuthProvider = ({ children }) => {
   }
 
   const register = async (name, email, password) => {
-    // intentionally left as-is in this task
+    try {
+      const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, {
+        name,
+        email,
+        password
+      })
+
+      const { token: newToken, data } = response.data
+      setToken(newToken)
+      setUser(data)
+      localStorage.setItem('token', newToken)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
+
+      return { success: true }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Registration failed'
+      }
+    }
   }
 
   const logout = () => {

@@ -9,7 +9,11 @@ export const API_ENDPOINTS = {
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     PROFILE: `${API_BASE_URL}/auth/profile`,
     CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
-    GOOGLE_URL: `${API_BASE_URL}/oauth/google/url`,
+    FORGOT_PASSWORD: `${API_BASE_URL}/auth/forgot-password`,
+    RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
+    VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
+    GOOGLE_URL: `${API_BASE_URL}/auth/google`,
+    GITHUB_URL: `${API_BASE_URL}/auth/github`,
     APPLE_URL: `${API_BASE_URL}/oauth/apple/url`
   },
   
@@ -19,6 +23,16 @@ export const API_ENDPOINTS = {
     GET_USER_URLS: `${API_BASE_URL}/urls/user`,
     DELETE_URL: `${API_BASE_URL}/urls`,
     UPDATE_URL: `${API_BASE_URL}/urls`
+  },
+
+  // Links endpoints (alternative naming)
+  LINKS: {
+    CREATE: `${API_BASE_URL}/create`,
+    LIST: `${API_BASE_URL}/create/links`,
+    GET: (id) => `${API_BASE_URL}/links/${id}`,
+    UPDATE: (id) => `${API_BASE_URL}/links/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/links/${id}`,
+    ANALYTICS: (id) => `${API_BASE_URL}/links/${id}/analytics`,
   }
 }
 

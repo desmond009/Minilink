@@ -47,14 +47,14 @@ const EmptyState = ({ icon: Icon, title, description, action = null }) => {
           {action.href ? (
             <Link
               to={action.href}
-              className="px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg transition-all duration-300"
+              className="px-6 py-3 rounded-lg font-semibold bg-linear-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg transition-all duration-300"
             >
               {action.label}
             </Link>
           ) : (
             <button
               onClick={action.onClick}
-              className="px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg transition-all duration-300"
+              className="px-6 py-3 rounded-lg font-semibold bg-linear-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg transition-all duration-300"
             >
               {action.label}
             </button>

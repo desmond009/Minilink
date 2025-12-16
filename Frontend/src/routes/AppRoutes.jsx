@@ -8,6 +8,7 @@ import Home from '../pages/Home'
 import Dashboard from '../pages/Dashboard'
 import LoginPage from '../pages/LoginPage'
 import SignupPage from '../pages/SignupPage'
+import ForgotPasswordPage from '../pages/ForgotPasswordPage'
 import Profile from '../pages/Profile'
 import LoginSuccess from '../pages/LoginSuccess'
 import PrivacyPolicy from '../pages/legal/PrivacyPolicy'
@@ -94,8 +95,8 @@ const SimplePage = ({ title, children }) => {
         <div className="max-w-4xl mx-auto">
           <h1 className={`text-4xl md:text-5xl font-bold mb-8 ${
             isDark
-              ? 'bg-gradient-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
-              : 'bg-gradient-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
+              ? 'bg-linear-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
+              : 'bg-linear-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
           }`}>
             {title}
           </h1>
@@ -148,6 +149,14 @@ const AppRoutes = () => {
             element={
               <PublicRoute>
                 <SignupPage />
+              </PublicRoute>
+            } 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={
+              <PublicRoute>
+                <ForgotPasswordPage />
               </PublicRoute>
             } 
           />

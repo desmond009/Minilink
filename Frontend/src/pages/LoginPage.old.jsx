@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { Mail, Lock, Eye, EyeOff, Chrome, Github, ShieldCheck } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Chrome, Github, ArrowRight, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import AuthLayout from '../components/auth/AuthLayout'
@@ -51,6 +51,7 @@ const LoginPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
     }
