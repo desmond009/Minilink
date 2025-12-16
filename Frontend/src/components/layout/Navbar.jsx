@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAuth } from '../context/AuthContext'
-import { useTheme } from '../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { Github, Sun, Moon, Menu, X, LogOut, User, LayoutDashboard } from 'lucide-react'
 

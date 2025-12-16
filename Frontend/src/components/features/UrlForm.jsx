@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAuth } from '../context/AuthContext'
-import { useTheme } from '../context/ThemeContext'
-import { useTempLinks } from '../context/TempLinksContext'
+import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
+import { useTempLinks } from '../../context/TempLinksContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import QRCodeGenerator from './QRCodeGenerator'
 import QRCodeScanner from './QRCodeScanner'
-import { reliableCopy } from '../utils/clipboard'
+import { reliableCopy } from '../../utils/helpers/clipboard'
 import { Link as LinkIcon, Copy, QrCode, Loader, CheckCircle2, ExternalLink } from 'lucide-react'
-import API_BASE_URL from '../api/config'
+import API_BASE_URL from '../../services/api'
 
 const UrlForm = () => {
   const [longUrl, setLongUrl] = useState('')

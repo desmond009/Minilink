@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useTheme } from '../context/ThemeContext'
+import { useTheme } from '../../context/ThemeContext'
 import { ArrowRight, Zap, Shield, BarChart3 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 

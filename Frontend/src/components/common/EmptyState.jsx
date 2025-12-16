@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useTheme } from '../context/ThemeContext'
+import { useTheme } from '../../context/ThemeContext'
 import { Link } from 'react-router-dom'
 
 const EmptyState = ({ icon: Icon, title, description, action = null }) => {

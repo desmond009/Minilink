@@ -1,10 +1,10 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useTheme } from '../context/ThemeContext'
+import { useTheme } from '../../context/ThemeContext'
 import { Link } from 'react-router-dom'
 import { Github, Twitter, Linkedin, Mail, Heart } from 'lucide-react'
 
-const FooterNew = () => {
+const Footer = () => {
   const { isDark } = useTheme()
   const currentYear = new Date().getFullYear()
 
@@ -166,4 +166,4 @@ const FooterNew = () => {
   )
 }
 
-export default FooterNew
+export default Footer

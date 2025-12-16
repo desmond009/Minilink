@@ -1,4 +1,3 @@
-
 export async function reliableCopy(text) {
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -19,3 +18,5 @@ export async function reliableCopy(text) {
     return { success: false, error }
   }
 }
+
+

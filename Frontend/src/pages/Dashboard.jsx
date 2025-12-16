@@ -4,16 +4,10 @@ import { useTheme } from '../context/ThemeContext'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
-import QRCodeGenerator from '../components/QRCodeGenerator'
-import ThreeBackground from '../components/ThreeBackground'
-import AnimatedLogo from '../components/AnimatedLogo'
-import FloatingButton from '../components/FloatingButton'
-import AnimatedCard from '../components/AnimatedCard'
-import { reliableCopy } from '../utils/clipboard'
-
-// Add a configurable base for short links. Defaults to production short domain
-const SHORT_BASE_URL = import.meta.env.VITE_SHORT_BASE_URL || 'https://mini.lk'
-const SHORT_PATH_PREFIX = '/r'
+import QRCodeGenerator from '../components/features/QRCodeGenerator'
+import AnimatedCard from '../components/common/AnimatedCard'
+import { reliableCopy } from '../utils/helpers/clipboard'
+import { SHORT_BASE_URL, SHORT_PATH_PREFIX } from '../utils/constants'
 
 const Dashboard = () => {
   const { user, logout } = useAuth()
@@ -112,7 +106,9 @@ const Dashboard = () => {
             <div className="max-w-4xl">
               <AnimatedCard className={`${isDark ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-xl shadow-2xl border ${isDark ? 'border-gray-700/50' : 'border-white/20'} p-6 mb-6`}>
                 <div className="flex items-center mb-4">
-                  <AnimatedLogo />
+                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                    ML
+                  </div>
                   <div className="ml-3">
                     <motion.h2 
                       className={`text-lg font-bold ${isDark ? 'text-white' : 'bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'}`}
@@ -177,10 +173,12 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="flex justify-center">
-                    <FloatingButton
+                    <motion.button
                       type="submit"
                       disabled={isCreating}
-                      className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white py-3 px-6 rounded-lg font-bold text-sm hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-50 shadow-lg hover:shadow-xl"
+                      className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white py-3 px-6 rounded-lg font-bold text-sm hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-50 shadow-lg hover:shadow-xl transition-all duration-200"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       {isCreating ? (
                         <div className="flex items-center">
@@ -193,7 +191,7 @@ const Dashboard = () => {
                           Create your MiniLink
                         </div>
                       )}
-                    </FloatingButton>
+                    </motion.button>
                   </div>
                   
                   <div className="flex justify-center space-x-4">
@@ -577,8 +575,6 @@ const Dashboard = () => {
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50'} relative overflow-hidden transition-colors duration-300`}>
-      {/* 3D Background */}
-      <ThreeBackground />
       
       {/* Sidebar */}
       <motion.div 
@@ -590,18 +586,22 @@ const Dashboard = () => {
         <div className="p-4">
           {/* Logo */}
           <div className="flex items-center mb-6">
-            <AnimatedLogo />
+            <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+              ML
+            </div>
             <span className={`text-lg font-bold ${isDark ? 'text-white' : 'bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'} ml-3`}>MiniLink</span>
           </div>
 
           {/* Create New Button */}
-          <FloatingButton 
+          <motion.button 
             onClick={() => setActiveTab('home')}
-            className="w-full text-white py-3 px-4 rounded-xl font-bold text-sm mb-6"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-bold text-sm mb-6 shadow-lg hover:shadow-xl transition-all duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <span className="mr-2">✨</span>
             Create New
-          </FloatingButton>
+          </motion.button>
 
           {/* Navigation */}
           <nav className="space-y-2">

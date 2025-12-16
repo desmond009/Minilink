@@ -2,13 +2,13 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import Navbar from '../components/Navbar'
-import UrlFormNew from '../components/UrlFormNew'
-import FooterNew from '../components/FooterNew'
-import HeroSectionNew from '../components/HeroSectionNew'
+import Navbar from '../components/layout/Navbar'
+import UrlForm from '../components/features/UrlForm'
+import Footer from '../components/layout/Footer'
+import HeroSection from '../components/sections/HeroSection'
 import { useTheme } from '../context/ThemeContext'
 
-const HomePageNew = () => {
+const Home = () => {
   const { isDark } = useTheme()
 
   return (
@@ -21,10 +21,10 @@ const HomePageNew = () => {
       {/* Hero Section with Input Form */}
       <main className="flex-1">
         {/* Hero */}
-        <HeroSectionNew />
+        <HeroSection />
 
         {/* Main URL Form */}
-        <UrlFormNew />
+        <UrlForm />
 
         {/* Social Proof Section */}
         <section className={`py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
@@ -216,7 +216,7 @@ const HomePageNew = () => {
       </main>
 
       {/* Footer */}
-      <FooterNew />
+      <Footer />
 
       {/* Toast Container */}
       <ToastContainer
@@ -235,4 +235,4 @@ const HomePageNew = () => {
   )
 }
 
-export default HomePageNew
+export default Home
