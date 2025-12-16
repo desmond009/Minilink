@@ -14,6 +14,14 @@ import LoginSuccess from '../pages/LoginSuccess'
 import PrivacyPolicy from '../pages/legal/PrivacyPolicy'
 import About from '../pages/company/About'
 
+// New Dashboard Pages
+import DashboardLayout from '../components/layout/DashboardLayout'
+import DashboardHome from '../pages/app/DashboardHome'
+import LinksPage from '../pages/app/LinksPage'
+import QRCodesPage from '../pages/app/QRCodesPage'
+import AnalyticsPage from '../pages/app/AnalyticsPage'
+import SettingsPage from '../pages/app/SettingsPage'
+
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -118,14 +126,33 @@ const AppRoutes = () => {
       <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 transition-colors duration-300">
         <Routes>
           <Route path="/" element={<Home />} />
+          
+          {/* New Dashboard with nested routes */}
           <Route 
             path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DashboardHome />} />
+            <Route path="links" element={<LinksPage />} />
+            <Route path="qr-codes" element={<QRCodesPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
+
+          {/* Old Dashboard route for backward compatibility */}
+          <Route 
+            path="/dashboard-old" 
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             } 
           />
+          
           <Route 
             path="/login" 
             element={
