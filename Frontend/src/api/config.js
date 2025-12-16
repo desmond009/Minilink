@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -7,12 +7,10 @@ export const API_ENDPOINTS = {
     REGISTER: `${API_BASE_URL}/auth/register`,
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     PROFILE: `${API_BASE_URL}/auth/profile`,
-    REFRESH: `${API_BASE_URL}/auth/refresh`,
-    FORGOT_PASSWORD: `${API_BASE_URL}/auth/forgot-password`,
-    RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
-    VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
-    GOOGLE_URL: `${API_BASE_URL}/auth/google`,
-    GITHUB_URL: `${API_BASE_URL}/auth/github`,
+    CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
+    GOOGLE_URL: `${API_BASE_URL}/oauth/google/url`,
+    GITHUB_URL: `${API_BASE_URL}/oauth/github/url`,
+    APPLE_URL: `${API_BASE_URL}/oauth/apple/url`,
   },
   LINKS: {
     CREATE: `${API_BASE_URL}/create`,
@@ -57,11 +55,20 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle 401 Unauthorized - token expired or invalid
     if (error.response?.status === 401) {
-      // Token expired or invalid
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      // Only redirect if not already on login page
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login'
+      }
     }
+    
+    // Handle network errors
+    if (!error.response) {
+      console.error('Network error:', error)
+    }
+    
     return Promise.reject(error)
   }
 )

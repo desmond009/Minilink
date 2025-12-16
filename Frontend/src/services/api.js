@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 export const API_ENDPOINTS = {
   // Auth endpoints
@@ -9,23 +9,12 @@ export const API_ENDPOINTS = {
     LOGOUT: `${API_BASE_URL}/auth/logout`,
     PROFILE: `${API_BASE_URL}/auth/profile`,
     CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
-    FORGOT_PASSWORD: `${API_BASE_URL}/auth/forgot-password`,
-    RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
-    VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
-    GOOGLE_URL: `${API_BASE_URL}/auth/google`,
-    GITHUB_URL: `${API_BASE_URL}/auth/github`,
+    GOOGLE_URL: `${API_BASE_URL}/oauth/google/url`,
+    GITHUB_URL: `${API_BASE_URL}/oauth/github/url`,
     APPLE_URL: `${API_BASE_URL}/oauth/apple/url`
   },
   
   // URL endpoints
-  URL: {
-    CREATE: `${API_BASE_URL}/create`,
-    GET_USER_URLS: `${API_BASE_URL}/urls/user`,
-    DELETE_URL: `${API_BASE_URL}/urls`,
-    UPDATE_URL: `${API_BASE_URL}/urls`
-  },
-
-  // Links endpoints (alternative naming)
   LINKS: {
     CREATE: `${API_BASE_URL}/create`,
     LIST: `${API_BASE_URL}/create/links`,

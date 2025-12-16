@@ -5,14 +5,7 @@ import { useTheme } from '../context/ThemeContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { Eye, EyeOff, Mail, Lock, Github, Chrome, User as UserIcon, ArrowRight, Check } from 'lucide-react'
-
-// For OAuth, we'll use the API endpoints from config if available
-const API_ENDPOINTS = {
-  AUTH: {
-    GOOGLE_URL: '/api/auth/google',
-    GITHUB_URL: '/api/auth/github'
-  }
-}
+import { authService } from '../services/auth.service'
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -68,16 +61,22 @@ const SignupPage = () => {
 
   const startOAuth = async (provider) => {
     try {
-      const endpoint = provider === 'google' ? API_ENDPOINTS.AUTH.GOOGLE_URL : API_ENDPOINTS.AUTH.GITHUB_URL
-      const res = await fetch(endpoint, { credentials: 'include' })
-      const data = await res.json()
+      let data
+      if (provider === 'google') {
+        data = await authService.getGoogleAuthUrl()
+      } else if (provider === 'github') {
+        toast.info('GitHub signup will be available soon')
+        return
+      }
+      
       if (data?.success && data?.url) {
         window.location.href = data.url
       } else {
         toast.error(data?.message || `Failed to start ${provider} signup`)
       }
     } catch (err) {
-      toast.error(`Failed to start ${provider} signup`)
+      console.error(`OAuth error for ${provider}:`, err)
+      toast.error(`Unable to connect with ${provider}. Please try again.`)
     }
   }
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import { toast } from 'react-toastify'
-import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
 import QRCodeGenerator from '../features/QRCodeGenerator'
 import ThreeBackground from '../features/ThreeBackground'
@@ -10,9 +9,10 @@ import AnimatedLogo from '../features/AnimatedLogo'
 import FloatingButton from '../common/FloatingButton'
 import AnimatedCard from '../common/AnimatedCard'
 import { reliableCopy } from '../../utils/helpers/clipboard'
+import { urlService } from '../../services/url.service'
 
 // Add a configurable base for short links. Defaults to production short domain
-const SHORT_BASE_URL = import.meta.env.VITE_SHORT_BASE_URL || 'https://mini.lk'
+const SHORT_BASE_URL = import.meta.env.VITE_SHORT_BASE_URL || window.location.origin
 const SHORT_PATH_PREFIX = '/r'
 
 const Dashboard = () => {
@@ -32,12 +32,8 @@ const Dashboard = () => {
   // Fetch user's links
   const fetchLinks = async () => {
     try {
-      const response = await axios.get((import.meta.env.VITE_API_URL + '/create/links'), {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-      setLinks(response.data.data || [])
+      const response = await urlService.getUserLinks()
+      setLinks(response.data || [])
     } catch (error) {
       console.error('Error fetching links:', error)
       toast.error('Failed to fetch links')
@@ -60,18 +56,14 @@ const Dashboard = () => {
 
     setIsCreating(true)
     try {
-      const response = await axios.post((import.meta.env.VITE_API_URL + '/create'), {
-        originalUrl: urlForm.originalUrl,
-        customAlias: urlForm.customAlias || undefined
-      }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+      const response = await urlService.createShortUrl(
+        urlForm.originalUrl,
+        urlForm.customAlias || null
+      )
 
-      if (response.data.success) {
+      if (response.success) {
         toast.success('Link created successfully!')
-        setCreatedLink(response.data.data)
+        setCreatedLink(response.data)
         setUrlForm({ originalUrl: '', customAlias: '' })
         fetchLinks() // Refresh the links list
       }
