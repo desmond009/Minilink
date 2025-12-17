@@ -12,6 +12,34 @@ import { generateQRCode } from "../utils/qrCodeGenerator.js";
 import { ApiError } from "../utils/ApiError.js";
 
 /**
+ * Generate a unique short ID with collision handling
+ */
+const generateUniqueShortId = async (maxAttempts = 20) => {
+    let attempts = 0;
+    while (attempts < maxAttempts) {
+        let shortId = generateShortId();
+        
+        // Validate generated shortId
+        if (!shortId || typeof shortId !== 'string' || shortId.trim() === '') {
+            attempts++;
+            continue;
+        }
+        
+        shortId = shortId.trim();
+        
+        // Check if it already exists
+        const existing = await ShortUrl.findOne({ shortId });
+        if (!existing) {
+            return shortId;
+        }
+        
+        attempts++;
+    }
+    
+    throw new ApiError(500, "Failed to generate unique short ID after multiple attempts.");
+};
+
+/**
  * Create a shortened URL with collision-resistant short ID
  */
 export const createShortUrl = async (originalUrl, userId, customAlias = null, options = {}) => {
@@ -41,6 +69,8 @@ export const createShortUrl = async (originalUrl, userId, customAlias = null, op
         
         // If custom alias provided, validate and use it
         if (customAlias) {
+            customAlias = customAlias.trim();
+            
             // Check if alias already exists
             const existingAlias = await ShortUrl.findOne({ 
                 $or: [
@@ -55,27 +85,20 @@ export const createShortUrl = async (originalUrl, userId, customAlias = null, op
             
             shortId = customAlias;
         } else {
-            // Generate unique short ID with collision handling
-            let attempts = 0;
-            const maxAttempts = 5;
-            
-            while (attempts < maxAttempts) {
-                shortId = generateShortId();
-                
-                const existing = await ShortUrl.findOne({ shortId });
-                if (!existing) break;
-                
-                attempts++;
-            }
-            
-            if (attempts === maxAttempts) {
-                throw new ApiError(500, "Failed to generate unique short ID. Please try again.");
-            }
+            // Generate unique short ID
+            shortId = await generateUniqueShortId(20);
         }
         
-        // Create short URL document
+        // Final validation to ensure shortId is valid
+        if (!shortId || typeof shortId !== 'string' || shortId.trim() === '') {
+            throw new ApiError(500, "Invalid short ID. Please try again.");
+        }
+        
+        shortId = shortId.trim();
+        
+        // Prepare document data
         const shortUrlData = {
-            shortId,
+            shortId: shortId,
             originalUrl: normalizedUrl,
             customAlias: customAlias || null,
             user: userId,
@@ -87,7 +110,62 @@ export const createShortUrl = async (originalUrl, userId, customAlias = null, op
             }
         };
         
-        const shortUrl = await ShortUrl.create(shortUrlData);
+        // Try to create the document with retry logic for duplicate key errors
+        let shortUrl;
+        let createAttempts = 0;
+        const maxCreateAttempts = 3;
+        
+        while (createAttempts < maxCreateAttempts) {
+            try {
+                shortUrl = await ShortUrl.create(shortUrlData);
+                break; // Success, exit retry loop
+            } catch (dbError) {
+                createAttempts++;
+                
+                // Handle duplicate key error
+                if (dbError.code === 11000 || dbError.code === 11001) {
+                    const errorMessage = dbError.message || '';
+                    
+                    // Check if it's a null shortId duplicate error
+                    if (errorMessage.includes('short_id') && errorMessage.includes('null')) {
+                        // Database has corrupted entries with null shortId
+                        // Try to generate a new shortId and retry (only if not using custom alias)
+                        if (!customAlias && createAttempts < maxCreateAttempts) {
+                            console.warn(`Duplicate key error for null shortId detected (attempt ${createAttempts}). Generating new ID...`);
+                            shortId = await generateUniqueShortId(20);
+                            shortUrlData.shortId = shortId;
+                            continue; // Retry with new ID
+                        } else {
+                            throw new ApiError(500, "Database contains invalid entries. Please contact support or run cleanup script.");
+                        }
+                    } else if (errorMessage.includes('shortId') || errorMessage.includes('short_id')) {
+                        // Regular duplicate shortId error - should not happen, but handle it
+                        if (!customAlias && createAttempts < maxCreateAttempts) {
+                            console.warn(`Duplicate shortId detected (attempt ${createAttempts}). Generating new ID...`);
+                            shortId = await generateUniqueShortId(20);
+                            shortUrlData.shortId = shortId;
+                            continue; // Retry with new ID
+                        } else {
+                            throw new ApiError(409, customAlias ? "Custom alias already in use." : "Short ID already exists. Please try again.");
+                        }
+                    } else if (errorMessage.includes('customAlias')) {
+                        // Duplicate customAlias error
+                        throw new ApiError(409, "Custom alias already in use.");
+                    } else {
+                        // Unknown duplicate key error
+                        throw new ApiError(409, "Duplicate entry detected. Please try again.");
+                    }
+                } else {
+                    // Non-duplicate-key error, don't retry
+                    throw dbError;
+                }
+            }
+        }
+        
+        // If we exhausted all retry attempts
+        if (!shortUrl) {
+            throw new ApiError(500, "Failed to create short URL after multiple attempts. Please try again.");
+        }
         
         // Generate QR code
         const baseUrl = process.env.APP_URL || 'https://mini.lk';

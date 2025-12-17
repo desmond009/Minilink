@@ -69,11 +69,21 @@ shortUrlSchema.virtual('shortUrl').get(function() {
 shortUrlSchema.set('toJSON', { virtuals: true });
 shortUrlSchema.set('toObject', { virtuals: true });
 
-// Pre-save hook to validate expiration date
+// Pre-save hook to validate expiration date and shortId
 shortUrlSchema.pre('save', function(next) {
+    // Validate shortId is never null or empty
+    if (!this.shortId || typeof this.shortId !== 'string' || this.shortId.trim() === '') {
+        return next(new Error('shortId is required and must be a non-empty string'));
+    }
+    
+    // Trim shortId
+    this.shortId = this.shortId.trim();
+    
+    // Validate expiration date
     if (this.expiresAt && this.expiresAt < new Date()) {
         this.isActive = false;
     }
+    
     next();
 });
 
