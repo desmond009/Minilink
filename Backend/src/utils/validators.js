@@ -1,5 +1,5 @@
 import { body, param, query, validationResult } from 'express-validator';
-import { isValidUrl, isValidCustomAlias } from './urlHelpers.js';
+import { isValidUrl } from './urlHelpers.js';
 
 // Validation middleware to check for errors
 export const validate = (req, res, next) => {
@@ -53,15 +53,6 @@ export const createUrlValidation = [
         .custom((value) => {
             if (!isValidUrl(value)) {
                 throw new Error('Please provide a valid URL');
-            }
-            return true;
-        }),
-    body('customAlias')
-        .optional()
-        .trim()
-        .custom((value) => {
-            if (value && !isValidCustomAlias(value)) {
-                throw new Error('Custom alias must be 3-20 characters long and contain only letters, numbers, hyphens, and underscores');
             }
             return true;
         }),

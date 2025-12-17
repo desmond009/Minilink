@@ -4,7 +4,7 @@ import User from "../model/user.model.js";
 import { 
     generateShortId, 
     normalizeUrl, 
-    isValidUrl, 
+    isValidUrl,
     isSafeUrl,
     parseUserAgent 
 } from "../utils/urlHelpers.js";
@@ -42,7 +42,7 @@ const generateUniqueShortId = async (maxAttempts = 20) => {
 /**
  * Create a shortened URL with collision-resistant short ID
  */
-export const createShortUrl = async (originalUrl, userId, customAlias = null, options = {}) => {
+export const createShortUrl = async (originalUrl, userId, options = {}) => {
     try {
         // Normalize and validate URL
         const normalizedUrl = normalizeUrl(originalUrl);
@@ -65,29 +65,8 @@ export const createShortUrl = async (originalUrl, userId, customAlias = null, op
             throw new ApiError(403, `You have reached your plan limit of ${user.maxUrls} URLs`);
         }
         
-        let shortId;
-        
-        // If custom alias provided, validate and use it
-        if (customAlias) {
-            customAlias = customAlias.trim();
-            
-            // Check if alias already exists
-            const existingAlias = await ShortUrl.findOne({ 
-                $or: [
-                    { customAlias: customAlias },
-                    { shortId: customAlias }
-                ]
-            });
-            
-            if (existingAlias) {
-                throw new ApiError(409, "Custom alias already in use");
-            }
-            
-            shortId = customAlias;
-        } else {
-            // Generate unique short ID
-            shortId = await generateUniqueShortId(20);
-        }
+        // Generate unique short ID
+        let shortId = await generateUniqueShortId(20);
         
         // Final validation to ensure shortId is valid
         if (!shortId || typeof shortId !== 'string' || shortId.trim() === '') {
@@ -100,7 +79,6 @@ export const createShortUrl = async (originalUrl, userId, customAlias = null, op
         const shortUrlData = {
             shortId: shortId,
             originalUrl: normalizedUrl,
-            customAlias: customAlias || null,
             user: userId,
             expiresAt: options.expiresAt || null,
             metadata: {
@@ -129,10 +107,11 @@ export const createShortUrl = async (originalUrl, userId, customAlias = null, op
                     // Check if it's a null shortId duplicate error
                     if (errorMessage.includes('short_id') && errorMessage.includes('null')) {
                         // Database has corrupted entries with null shortId
-                        // Try to generate a new shortId and retry (only if not using custom alias)
-                        if (!customAlias && createAttempts < maxCreateAttempts) {
+                        // Try to generate a new shortId and retry
+                        if (createAttempts < maxCreateAttempts) {
                             console.warn(`Duplicate key error for null shortId detected (attempt ${createAttempts}). Generating new ID...`);
                             shortId = await generateUniqueShortId(20);
+                            shortId = shortId.trim();
                             shortUrlData.shortId = shortId;
                             continue; // Retry with new ID
                         } else {
@@ -140,17 +119,15 @@ export const createShortUrl = async (originalUrl, userId, customAlias = null, op
                         }
                     } else if (errorMessage.includes('shortId') || errorMessage.includes('short_id')) {
                         // Regular duplicate shortId error - should not happen, but handle it
-                        if (!customAlias && createAttempts < maxCreateAttempts) {
+                        if (createAttempts < maxCreateAttempts) {
                             console.warn(`Duplicate shortId detected (attempt ${createAttempts}). Generating new ID...`);
                             shortId = await generateUniqueShortId(20);
+                            shortId = shortId.trim();
                             shortUrlData.shortId = shortId;
                             continue; // Retry with new ID
                         } else {
-                            throw new ApiError(409, customAlias ? "Custom alias already in use." : "Short ID already exists. Please try again.");
+                            throw new ApiError(409, "Short ID already exists. Please try again.");
                         }
-                    } else if (errorMessage.includes('customAlias')) {
-                        // Duplicate customAlias error
-                        throw new ApiError(409, "Custom alias already in use.");
                     } else {
                         // Unknown duplicate key error
                         throw new ApiError(409, "Duplicate entry detected. Please try again.");

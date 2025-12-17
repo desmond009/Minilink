@@ -39,7 +39,7 @@ const About = () => {
             <section>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">What We Offer</h2>
               <ul className="text-gray-700 space-y-2">
-                <li>• URL shortening with custom aliases</li>
+                <li>• Professional URL shortening with auto-generated short links</li>
                 <li>• QR code generation and management</li>
                 <li>• Detailed analytics and click tracking</li>
                 <li>• Branded links and custom domains</li>

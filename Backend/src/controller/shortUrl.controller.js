@@ -8,7 +8,7 @@ import { generateQRCodeBuffer } from "../utils/qrCodeGenerator.js";
  * POST /api/urls
  */
 export const createShortUrl = asyncHandler(async (req, res) => {
-    const { originalUrl, customAlias, expiresAt, metadata } = req.body;
+    const { originalUrl, expiresAt, metadata } = req.body;
     const userId = req.user._id;
 
     const options = {
@@ -21,7 +21,6 @@ export const createShortUrl = asyncHandler(async (req, res) => {
     const shortUrl = await urlService.createShortUrl(
         originalUrl, 
         userId, 
-        customAlias, 
         options
     );
 
@@ -36,7 +35,6 @@ export const createShortUrl = asyncHandler(async (req, res) => {
             originalUrl: shortUrl.originalUrl,
             shortUrl: `${baseUrl}/r/${shortUrl.shortId}`,
             qrCode: shortUrl.qrCode,
-            customAlias: shortUrl.customAlias,
             clicks: shortUrl.clicks,
             isActive: shortUrl.isActive,
             expiresAt: shortUrl.expiresAt,

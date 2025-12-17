@@ -17,8 +17,7 @@ const DashboardHome = () => {
   })
   const [recentLinks, setRecentLinks] = useState([])
   const [urlForm, setUrlForm] = useState({
-    originalUrl: '',
-    customAlias: ''
+    originalUrl: ''
   })
   const [isCreating, setIsCreating] = useState(false)
 
@@ -61,21 +60,32 @@ const DashboardHome = () => {
 
     setIsCreating(true)
     try {
-      const response = await urlService.createShortUrl(
-        urlForm.originalUrl,
-        urlForm.customAlias || null
-      )
+      const response = await urlService.createShortUrl(urlForm.originalUrl)
 
       if (response.success) {
         toast.success('Link created successfully!')
-        setUrlForm({ originalUrl: '', customAlias: '' })
+        setUrlForm({ originalUrl: '' })
         fetchDashboardData()
         
         // Copy to clipboard automatically
         await reliableCopy(response.data.shortUrl)
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create link')
+      // Handle different error types
+      let errorMessage = 'Failed to create link'
+      
+      if (error.response) {
+        // Server responded with error
+        errorMessage = error.response.data?.message || error.response.statusText || 'Failed to create link'
+      } else if (error.request) {
+        // Request made but no response
+        errorMessage = 'Network error. Please check your connection and try again.'
+      } else {
+        // Something else happened
+        errorMessage = error.message || 'An unexpected error occurred'
+      }
+      
+      toast.error(errorMessage)
     } finally {
       setIsCreating(false)
     }
@@ -214,25 +224,6 @@ const DashboardHome = () => {
                     : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400'
                 } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all`}
                 required
-              />
-            </div>
-
-            <div>
-              <label className={`block text-sm font-medium mb-2 ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Custom Alias (Optional)
-              </label>
-              <input
-                type="text"
-                value={urlForm.customAlias}
-                onChange={(e) => setUrlForm({ ...urlForm, customAlias: e.target.value })}
-                placeholder="my-custom-link"
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  isDark 
-                    ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
-                    : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400'
-                } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all`}
               />
             </div>
 

@@ -59,7 +59,7 @@ const QRCodesPage = () => {
     if (!qrDataUrl) return
 
     const link = document.createElement('a')
-    link.download = `qr-code-${selectedLink?.customAlias || 'link'}.png`
+    link.download = `qr-code-${selectedLink?.shortId || 'link'}.png`
     link.href = qrDataUrl
     link.click()
     toast.success('QR Code downloaded!')

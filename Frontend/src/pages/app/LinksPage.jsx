@@ -48,7 +48,7 @@ const LinksPage = () => {
     const matchesSearch = 
       link.shortUrl?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       link.originalUrl?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.customAlias?.toLowerCase().includes(searchQuery.toLowerCase())
+      link.shortId?.toLowerCase().includes(searchQuery.toLowerCase())
     
     const matchesFilter = 
       filterStatus === 'all' ||

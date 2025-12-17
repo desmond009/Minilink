@@ -15,8 +15,7 @@ const Dashboard = () => {
   const [links, setLinks] = useState([])
   const [loading, setLoading] = useState(true)
   const [urlForm, setUrlForm] = useState({
-    originalUrl: '',
-    customAlias: ''
+    originalUrl: ''
   })
   const [isCreating, setIsCreating] = useState(false)
   const [createdLink, setCreatedLink] = useState(null)
@@ -55,8 +54,7 @@ const Dashboard = () => {
     setIsCreating(true)
     try {
       const response = await axios.post((import.meta.env.VITE_API_URL + '/api/urls'), {
-        originalUrl: urlForm.originalUrl,
-        customAlias: urlForm.customAlias || undefined
+        originalUrl: urlForm.originalUrl
       }, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -64,13 +62,36 @@ const Dashboard = () => {
       })
 
       if (response.data.success) {
-        toast.success('Link created successfully!')
+        // Check if alias was automatically varied
+        if (response.data.data.aliasVariated) {
+          toast.success(
+            `Link created! Your alias "${response.data.data.originalRequestedAlias}" was taken, so we used "${response.data.data.shortId}" instead.`,
+            { duration: 6000 }
+          )
+        } else {
+          toast.success('Link created successfully!')
+        }
+        
         setCreatedLink(response.data.data)
-        setUrlForm({ originalUrl: '', customAlias: '' })
+        setUrlForm({ originalUrl: '' })
         fetchLinks() // Refresh the links list
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create link')
+      // Handle different error types
+      let errorMessage = 'Failed to create link'
+      
+      if (error.response) {
+        // Server responded with error
+        errorMessage = error.response.data?.message || error.response.statusText || 'Failed to create link'
+      } else if (error.request) {
+        // Request made but no response
+        errorMessage = 'Network error. Please check your connection and try again.'
+      } else {
+        // Something else happened
+        errorMessage = error.message || 'An unexpected error occurred'
+      }
+      
+      toast.error(errorMessage)
     } finally {
       setIsCreating(false)
     }
@@ -130,34 +151,11 @@ const Dashboard = () => {
                 </div>
                 
                 <form onSubmit={handleCreateLink} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      <label className={`block text-xs font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                        🌐 Domain: {SHORT_BASE_URL}
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          value={urlForm.customAlias}
-                          onChange={(e) => setUrlForm({...urlForm, customAlias: e.target.value})}
-                          placeholder="Custom alias (optional)"
-                          className={`w-full px-3 py-2 text-sm border-2 ${isDark ? 'border-gray-600 bg-gray-700/50 text-white' : 'border-gray-200 bg-white/80'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200 backdrop-blur-sm`}
-                        />
-                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                          <span className="text-gray-400 text-xs">🔒</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                    
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                    >
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
                       <label className={`block text-xs font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                         📎 Enter your destination URL
                       </label>
@@ -170,7 +168,6 @@ const Dashboard = () => {
                         required
                       />
                     </motion.div>
-                  </div>
                   
                   <div className="flex justify-center">
                     <motion.button

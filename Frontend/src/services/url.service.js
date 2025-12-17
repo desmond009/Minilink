@@ -2,19 +2,30 @@ import axios from 'axios'
 import { API_ENDPOINTS } from './api'
 
 export const urlService = {
-  createShortUrl: async (originalUrl, customAlias = null) => {
+  createShortUrl: async (originalUrl) => {
     const payload = { originalUrl }
-    if (customAlias) {
-      payload.customAlias = customAlias
-    }
     
     const token = localStorage.getItem('token')
-    const response = await axios.post(API_ENDPOINTS.LINKS.CREATE, payload, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    try {
+      const response = await axios.post(API_ENDPOINTS.LINKS.CREATE, payload, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      // Re-throw with better error message handling
+      if (error.response) {
+        // Server responded with error
+        throw error
+      } else if (error.request) {
+        // Request made but no response
+        throw new Error('Network error. Please check your connection and try again.')
+      } else {
+        // Something else happened
+        throw new Error(error.message || 'An unexpected error occurred')
       }
-    })
-    return response.data
+    }
   },
 
   getUserUrls: async () => {
