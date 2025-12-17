@@ -92,7 +92,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
 // Get User Profile
 const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user.id);
+    // req.user is already populated by the protect middleware
+    const user = await User.findById(req.user._id);
     
     if (!user) {
         throw new ApiError(404, "User not found");
@@ -118,7 +119,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
     const { name, email } = req.body;
 
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
         throw new ApiError(404, "User not found");
     }
@@ -161,7 +162,7 @@ const changePassword = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Please provide current and new password");
     }
 
-    const user = await User.findById(req.user.id).select('+password');
+    const user = await User.findById(req.user._id).select('+password');
     if (!user) {
         throw new ApiError(404, "User not found");
     }
