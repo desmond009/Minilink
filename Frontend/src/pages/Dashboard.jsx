@@ -26,7 +26,7 @@ const Dashboard = () => {
   // Fetch user's links
   const fetchLinks = async () => {
     try {
-      const response = await axios.get((import.meta.env.VITE_API_URL + '/create/links'), {
+      const response = await axios.get((import.meta.env.VITE_API_URL + '/api/urls'), {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -54,7 +54,7 @@ const Dashboard = () => {
 
     setIsCreating(true)
     try {
-      const response = await axios.post((import.meta.env.VITE_API_URL + '/create'), {
+      const response = await axios.post((import.meta.env.VITE_API_URL + '/api/urls'), {
         originalUrl: urlForm.originalUrl,
         customAlias: urlForm.customAlias || undefined
       }, {
@@ -327,7 +327,7 @@ const Dashboard = () => {
                 ) : (
                   links.map((link, index) => (
                     <motion.div 
-                      key={link._id} 
+                      key={link._id || link.id || `link-${index}`} 
                       className={`p-4 ${isDark ? 'hover:bg-gray-700/30' : 'hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50'} transition-all duration-300 group`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -417,7 +417,7 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {links.slice(0, 6).map((link, index) => (
                       <motion.div 
-                        key={link._id} 
+                        key={link._id || link.id || `link-${index}`} 
                         className={`${isDark ? 'bg-gray-700/50 border-gray-600/50' : 'bg-gradient-to-br from-white/80 to-gray-50/80 border-gray-200/50'} backdrop-blur-sm rounded-lg p-4 border hover:shadow-lg transition-all duration-300`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

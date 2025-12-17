@@ -1,5 +1,7 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+// Ensure VITE_API_URL includes /api, or append it if not present
+const envApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API_BASE_URL = envApiUrl.endsWith('/api') ? envApiUrl : `${envApiUrl}/api`
 
 export const API_ENDPOINTS = {
   // Auth endpoints
@@ -16,12 +18,14 @@ export const API_ENDPOINTS = {
   
   // URL endpoints
   LINKS: {
-    CREATE: `${API_BASE_URL}/create`,
-    LIST: `${API_BASE_URL}/create/links`,
-    GET: (id) => `${API_BASE_URL}/links/${id}`,
-    UPDATE: (id) => `${API_BASE_URL}/links/${id}`,
-    DELETE: (id) => `${API_BASE_URL}/links/${id}`,
-    ANALYTICS: (id) => `${API_BASE_URL}/links/${id}/analytics`,
+    CREATE: `${API_BASE_URL}/urls`,
+    LIST: `${API_BASE_URL}/urls`,
+    GET: (id) => `${API_BASE_URL}/urls/${id}`,
+    UPDATE: (id) => `${API_BASE_URL}/urls/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/urls/${id}`,
+    ANALYTICS: (id) => `${API_BASE_URL}/urls/${id}/analytics`,
+    QRCODE: (id) => `${API_BASE_URL}/urls/${id}/qrcode`,
+    DASHBOARD_STATS: `${API_BASE_URL}/urls/stats/dashboard`,
   }
 }
 

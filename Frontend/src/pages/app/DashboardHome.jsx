@@ -272,9 +272,9 @@ const DashboardHome = () => {
                 No links yet. Create your first one!
               </p>
             ) : (
-              recentLinks.map((link) => (
+              recentLinks.map((link, index) => (
                 <div
-                  key={link._id}
+                  key={link._id || link.id || `link-${index}`}
                   className={`p-3 rounded-lg ${
                     isDark ? 'bg-gray-800 hover:bg-gray-750' : 'bg-gray-50 hover:bg-gray-100'
                   } transition-colors`}

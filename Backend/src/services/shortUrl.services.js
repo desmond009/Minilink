@@ -1,50 +1,406 @@
 import ShortUrl from "../model/shorturl.models.js";
+import ClickEvent from "../model/analytics.model.js";
+import User from "../model/user.model.js";
+import { 
+    generateShortId, 
+    normalizeUrl, 
+    isValidUrl, 
+    isSafeUrl,
+    parseUserAgent 
+} from "../utils/urlHelpers.js";
+import { generateQRCode } from "../utils/qrCodeGenerator.js";
 import { ApiError } from "../utils/ApiError.js";
-import { GenerateNanoId } from "../utils/helper.js";
 
-export const GenerateShort_URL_SERVICES = async (url, userId, customAlias = null) => {
-    let short_id;
-
-    if (customAlias) {
-        // Check if custom alias already exists
-        const existingUrl = await ShortUrl.findOne({ short_id: customAlias });
-        if (existingUrl) {
-            throw new ApiError(400, "Custom alias already exists");
-        }
-        short_id = customAlias;
-    } else {
-        short_id = GenerateNanoId(6);
+/**
+ * Create a shortened URL with collision-resistant short ID
+ */
+export const createShortUrl = async (originalUrl, userId, customAlias = null, options = {}) => {
+    try {
+        // Normalize and validate URL
+        const normalizedUrl = normalizeUrl(originalUrl);
         
-        // Ensure the generated short_id is unique
-        let isUnique = false;
-        let attempts = 0;
-        while (!isUnique && attempts < 10) {
-            const existingUrl = await ShortUrl.findOne({ short_id });
-            if (!existingUrl) {
-                isUnique = true;
-            } else {
-                short_id = GenerateNanoId(6);
+        if (!isValidUrl(normalizedUrl)) {
+            throw new ApiError(400, "Invalid URL format");
+        }
+        
+        if (!isSafeUrl(normalizedUrl)) {
+            throw new ApiError(400, "URL is not allowed for security reasons");
+        }
+        
+        // Check user exists and can create URLs
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+        
+        if (!user.canCreateUrl()) {
+            throw new ApiError(403, `You have reached your plan limit of ${user.maxUrls} URLs`);
+        }
+        
+        let shortId;
+        
+        // If custom alias provided, validate and use it
+        if (customAlias) {
+            // Check if alias already exists
+            const existingAlias = await ShortUrl.findOne({ 
+                $or: [
+                    { customAlias: customAlias },
+                    { shortId: customAlias }
+                ]
+            });
+            
+            if (existingAlias) {
+                throw new ApiError(409, "Custom alias already in use");
+            }
+            
+            shortId = customAlias;
+        } else {
+            // Generate unique short ID with collision handling
+            let attempts = 0;
+            const maxAttempts = 5;
+            
+            while (attempts < maxAttempts) {
+                shortId = generateShortId();
+                
+                const existing = await ShortUrl.findOne({ shortId });
+                if (!existing) break;
+                
                 attempts++;
+            }
+            
+            if (attempts === maxAttempts) {
+                throw new ApiError(500, "Failed to generate unique short ID. Please try again.");
             }
         }
         
-        if (!isUnique) {
-            throw new ApiError(400, "Failed to generate unique short URL");
-        }
+        // Create short URL document
+        const shortUrlData = {
+            shortId,
+            originalUrl: normalizedUrl,
+            customAlias: customAlias || null,
+            user: userId,
+            expiresAt: options.expiresAt || null,
+            metadata: {
+                title: options.title || null,
+                description: options.description || null,
+                tags: options.tags || []
+            }
+        };
+        
+        const shortUrl = await ShortUrl.create(shortUrlData);
+        
+        // Generate QR code
+        const baseUrl = process.env.APP_URL || 'https://mini.lk';
+        const fullShortUrl = `${baseUrl}/r/${shortId}`;
+        const qrCodeDataUrl = await generateQRCode(fullShortUrl);
+        
+        // Update with QR code
+        shortUrl.qrCode = qrCodeDataUrl;
+        await shortUrl.save();
+        
+        // Increment user's URL count
+        await user.incrementUrlCount();
+        
+        return shortUrl;
+    } catch (error) {
+        if (error instanceof ApiError) throw error;
+        throw new ApiError(500, `Failed to create short URL: ${error.message}`);
     }
-
-    const new_URL = new ShortUrl({
-        long_url: url,
-        short_id: short_id,
-        user: userId,
-        clickCount: 0
-    });
-
-    await new_URL.save();
-
-    return new_URL;
 };
 
-export const redirect_From_Short_Url = async (short_id) => {
-    return await ShortUrl.findOne({ short_id });
+/**
+ * Get original URL by short ID
+ */
+export const getOriginalUrl = async (shortId) => {
+    try {
+        const shortUrl = await ShortUrl.findOne({ 
+            shortId, 
+            isActive: true 
+        });
+        
+        if (!shortUrl) {
+            return null;
+        }
+        
+        // Check if URL has expired
+        if (shortUrl.expiresAt && shortUrl.expiresAt < new Date()) {
+            shortUrl.isActive = false;
+            await shortUrl.save();
+            return null;
+        }
+        
+        return shortUrl;
+    } catch (error) {
+        throw new ApiError(500, `Failed to retrieve URL: ${error.message}`);
+    }
+};
+
+/**
+ * Record a click event and update analytics
+ */
+export const recordClick = async (shortUrlId, userId, requestData = {}) => {
+    try {
+        // Increment click count atomically
+        await ShortUrl.findByIdAndUpdate(
+            shortUrlId,
+            { $inc: { clicks: 1 } }
+        );
+        
+        // Extract device info from user agent
+        const deviceInfo = parseUserAgent(requestData.userAgent);
+        
+        // Create click event for analytics
+        const clickEvent = await ClickEvent.create({
+            shortUrl: shortUrlId,
+            user: userId,
+            timestamp: new Date(),
+            ipAddress: requestData.ipAddress || null,
+            userAgent: requestData.userAgent || null,
+            referrer: requestData.referrer || null,
+            country: requestData.country || null,
+            device: deviceInfo
+        });
+        
+        return clickEvent;
+    } catch (error) {
+        // Log error but don't fail the redirect
+        console.error('Failed to record click:', error.message);
+    }
+};
+
+/**
+ * Get user's URLs with pagination and filtering
+ */
+export const getUserUrls = async (userId, options = {}) => {
+    try {
+        const {
+            page = 1,
+            limit = 10,
+            sortBy = 'createdAt',
+            sortOrder = 'desc',
+            isActive = null
+        } = options;
+        
+        const skip = (page - 1) * limit;
+        
+        const query = { user: userId };
+        if (isActive !== null) {
+            query.isActive = isActive;
+        }
+        
+        const sortOptions = {};
+        sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+        
+        const urls = await ShortUrl.find(query)
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(limit)
+            .select('-__v');
+        
+        const total = await ShortUrl.countDocuments(query);
+        
+        return {
+            urls,
+            pagination: {
+                total,
+                page,
+                pages: Math.ceil(total / limit),
+                limit
+            }
+        };
+    } catch (error) {
+        throw new ApiError(500, `Failed to fetch URLs: ${error.message}`);
+    }
+};
+
+/**
+ * Update a short URL
+ */
+export const updateShortUrl = async (urlId, userId, updateData) => {
+    try {
+        const shortUrl = await ShortUrl.findOne({ _id: urlId, user: userId });
+        
+        if (!shortUrl) {
+            throw new ApiError(404, "URL not found");
+        }
+        
+        // Update allowed fields
+        if (updateData.originalUrl) {
+            const normalizedUrl = normalizeUrl(updateData.originalUrl);
+            if (!isValidUrl(normalizedUrl) || !isSafeUrl(normalizedUrl)) {
+                throw new ApiError(400, "Invalid URL");
+            }
+            shortUrl.originalUrl = normalizedUrl;
+        }
+        
+        if (updateData.isActive !== undefined) {
+            shortUrl.isActive = updateData.isActive;
+        }
+        
+        if (updateData.metadata) {
+            shortUrl.metadata = {
+                ...shortUrl.metadata,
+                ...updateData.metadata
+            };
+        }
+        
+        await shortUrl.save();
+        
+        return shortUrl;
+    } catch (error) {
+        if (error instanceof ApiError) throw error;
+        throw new ApiError(500, `Failed to update URL: ${error.message}`);
+    }
+};
+
+/**
+ * Delete a short URL
+ */
+export const deleteShortUrl = async (urlId, userId) => {
+    try {
+        const shortUrl = await ShortUrl.findOneAndDelete({ 
+            _id: urlId, 
+            user: userId 
+        });
+        
+        if (!shortUrl) {
+            throw new ApiError(404, "URL not found");
+        }
+        
+        // Delete associated analytics
+        await ClickEvent.deleteMany({ shortUrl: urlId });
+        
+        // Decrement user's URL count
+        await User.findByIdAndUpdate(userId, { 
+            $inc: { urlsCreated: -1 } 
+        });
+        
+        return shortUrl;
+    } catch (error) {
+        if (error instanceof ApiError) throw error;
+        throw new ApiError(500, `Failed to delete URL: ${error.message}`);
+    }
+};
+
+/**
+ * Get analytics for a specific URL
+ */
+export const getUrlAnalytics = async (urlId, userId, options = {}) => {
+    try {
+        const shortUrl = await ShortUrl.findOne({ _id: urlId, user: userId });
+        
+        if (!shortUrl) {
+            throw new ApiError(404, "URL not found");
+        }
+        
+        const {
+            startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+            endDate = new Date()
+        } = options;
+        
+        // Get click events for date range
+        const clickEvents = await ClickEvent.find({
+            shortUrl: urlId,
+            timestamp: { $gte: startDate, $lte: endDate }
+        }).sort({ timestamp: -1 });
+        
+        // Aggregate analytics
+        const analytics = {
+            totalClicks: shortUrl.clicks,
+            clicksInRange: clickEvents.length,
+            clicksByDate: {},
+            clicksByDevice: {},
+            clicksByBrowser: {},
+            clicksByOS: {},
+            clicksByCountry: {},
+            topReferrers: {}
+        };
+        
+        // Process click events
+        clickEvents.forEach(click => {
+            // By date
+            const date = click.timestamp.toISOString().split('T')[0];
+            analytics.clicksByDate[date] = (analytics.clicksByDate[date] || 0) + 1;
+            
+            // By device
+            const deviceType = click.device.type;
+            analytics.clicksByDevice[deviceType] = (analytics.clicksByDevice[deviceType] || 0) + 1;
+            
+            // By browser
+            const browser = click.device.browser;
+            if (browser && browser !== 'unknown') {
+                analytics.clicksByBrowser[browser] = (analytics.clicksByBrowser[browser] || 0) + 1;
+            }
+            
+            // By OS
+            const os = click.device.os;
+            if (os && os !== 'unknown') {
+                analytics.clicksByOS[os] = (analytics.clicksByOS[os] || 0) + 1;
+            }
+            
+            // By country
+            if (click.country) {
+                analytics.clicksByCountry[click.country] = (analytics.clicksByCountry[click.country] || 0) + 1;
+            }
+            
+            // By referrer
+            if (click.referrer) {
+                analytics.topReferrers[click.referrer] = (analytics.topReferrers[click.referrer] || 0) + 1;
+            }
+        });
+        
+        return {
+            url: shortUrl,
+            analytics,
+            dateRange: { startDate, endDate }
+        };
+    } catch (error) {
+        if (error instanceof ApiError) throw error;
+        throw new ApiError(500, `Failed to get analytics: ${error.message}`);
+    }
+};
+
+/**
+ * Get dashboard statistics for a user
+ */
+export const getDashboardStats = async (userId) => {
+    try {
+        const totalUrls = await ShortUrl.countDocuments({ user: userId });
+        const activeUrls = await ShortUrl.countDocuments({ user: userId, isActive: true });
+        
+        const urlsWithClicks = await ShortUrl.aggregate([
+            { $match: { user: userId } },
+            {
+                $group: {
+                    _id: null,
+                    totalClicks: { $sum: '$clicks' }
+                }
+            }
+        ]);
+        
+        const totalClicks = urlsWithClicks[0]?.totalClicks || 0;
+        
+        // Get recent clicks (last 7 days)
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const recentClicks = await ClickEvent.countDocuments({
+            user: userId,
+            timestamp: { $gte: sevenDaysAgo }
+        });
+        
+        // Get top performing URLs
+        const topUrls = await ShortUrl.find({ user: userId })
+            .sort({ clicks: -1 })
+            .limit(5)
+            .select('shortId originalUrl clicks createdAt');
+        
+        return {
+            totalUrls,
+            activeUrls,
+            totalClicks,
+            recentClicks,
+            topUrls
+        };
+    } catch (error) {
+        throw new ApiError(500, `Failed to get dashboard stats: ${error.message}`);
+    }
 };

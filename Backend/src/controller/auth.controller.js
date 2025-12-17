@@ -2,16 +2,17 @@ import User from '../model/user.model.js';
 import jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import crypto from 'crypto';
 
 // Generate JWT Token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE || '7d'
+        expiresIn: '7d'
     });
 };
 
 // Register User
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
     // Check if user already exists
@@ -24,8 +25,14 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         name,
         email,
-        password
+        password,
+        authProvider: 'local',
+        isVerified: true // Auto-verify for now, can add email verification later
     });
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
 
     // Generate token
     const token = generateToken(user._id);
@@ -36,6 +43,9 @@ const registerUser = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        plan: user.plan,
+        urlsCreated: user.urlsCreated,
+        maxUrls: user.maxUrls,
         isVerified: user.isVerified,
         createdAt: user.createdAt
     };
@@ -49,13 +59,8 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // Login User
-const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-
-    // Check if email and password are provided
-    if (!email || !password) {
-        throw new ApiError(400, "Please provide email and password");
-    }
 
     // Find user and include password for comparison
     const user = await User.findOne({ email }).select('+password');
@@ -63,11 +68,20 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Invalid email or password");
     }
 
+    // Check if user signed up with OAuth
+    if (user.authProvider !== 'local') {
+        throw new ApiError(400, `This account uses ${user.authProvider} login. Please use ${user.authProvider} to sign in.`);
+    }
+
     // Check if password is correct
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
         throw new ApiError(401, "Invalid email or password");
     }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
 
     // Generate token
     const token = generateToken(user._id);
@@ -78,7 +92,11 @@ const loginUser = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        plan: user.plan,
+        urlsCreated: user.urlsCreated,
+        maxUrls: user.maxUrls,
         isVerified: user.isVerified,
+        avatar: user.avatar,
         createdAt: user.createdAt
     };
 
@@ -91,8 +109,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // Get User Profile
-const getUserProfile = asyncHandler(async (req, res) => {
-    // req.user is already populated by the protect middleware
+export const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     
     if (!user) {
@@ -104,8 +121,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        plan: user.plan,
+        urlsCreated: user.urlsCreated,
+        maxUrls: user.maxUrls,
         isVerified: user.isVerified,
         avatar: user.avatar,
+        authProvider: user.authProvider,
+        lastLogin: user.lastLogin,
         createdAt: user.createdAt
     };
 
@@ -116,8 +138,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 // Update User Profile
-const updateUserProfile = asyncHandler(async (req, res) => {
-    const { name, email } = req.body;
+export const updateUserProfile = asyncHandler(async (req, res) => {
+    const { name, email, avatar } = req.body;
 
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -134,6 +156,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         }
         user.email = email;
     }
+    if (avatar) user.avatar = avatar;
 
     await user.save();
 
@@ -142,6 +165,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        plan: user.plan,
+        urlsCreated: user.urlsCreated,
+        maxUrls: user.maxUrls,
         isVerified: user.isVerified,
         avatar: user.avatar,
         createdAt: user.createdAt
@@ -155,16 +181,17 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 });
 
 // Change Password
-const changePassword = asyncHandler(async (req, res) => {
+export const changePassword = asyncHandler(async (req, res) => {
     const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-        throw new ApiError(400, "Please provide current and new password");
-    }
 
     const user = await User.findById(req.user._id).select('+password');
     if (!user) {
         throw new ApiError(404, "User not found");
+    }
+
+    // Check if user uses local auth
+    if (user.authProvider !== 'local') {
+        throw new ApiError(400, "Cannot change password for OAuth accounts");
     }
 
     // Check current password
@@ -183,19 +210,10 @@ const changePassword = asyncHandler(async (req, res) => {
     });
 });
 
-// Logout User (Client-side token removal)
-const logoutUser = asyncHandler(async (req, res) => {
+// Logout User
+export const logoutUser = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Logged out successfully"
     });
 });
-
-export {
-    registerUser,
-    loginUser,
-    getUserProfile,
-    updateUserProfile,
-    changePassword,
-    logoutUser
-};

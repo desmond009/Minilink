@@ -5,12 +5,11 @@ import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import { useTempLinks } from '../../context/TempLinksContext'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import { urlService } from '../../services/url.service'
 import QRCodeGenerator from './QRCodeGenerator'
 import QRCodeScanner from './QRCodeScanner'
 import { reliableCopy } from '../../utils/helpers/clipboard'
 import { Link as LinkIcon, Copy, QrCode, Loader, CheckCircle2, ExternalLink } from 'lucide-react'
-import API_BASE_URL from '../../services/api'
 
 const UrlForm = () => {
   const [longUrl, setLongUrl] = useState('')
@@ -63,14 +62,7 @@ const UrlForm = () => {
 
     try {
       if (isAuthenticated) {
-        const { data } = await axios.post(API_BASE_URL + "/create", { 
-          originalUrl: longUrl 
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        
+        const data = await urlService.createShortUrl(longUrl)
         setShortUrl(data.data.shortUrl)
         toast.success('URL shortened successfully!')
       } else {

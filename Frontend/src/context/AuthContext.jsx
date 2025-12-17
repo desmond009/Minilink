@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { apiClient, API_ENDPOINTS } from '../api/config'
+import axios from 'axios'
+import { API_ENDPOINTS } from '../services/api'
 
 const AuthContext = createContext()
 
@@ -15,6 +16,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [token, setToken] = useState(localStorage.getItem('token'))
+
+  // Set up axios defaults
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    } else {
+      delete axios.defaults.headers.common['Authorization']
+    }
+  }, [token])
 
   // Handle token from OAuth redirect
   useEffect(() => {
@@ -33,7 +43,11 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       if (token) {
         try {
-          const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE)
+          const response = await axios.get(API_ENDPOINTS.AUTH.PROFILE, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
           setUser(response.data.data)
         } catch (error) {
           console.error('Auth check failed:', error)
@@ -48,7 +62,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
+      const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, {
         email,
         password
       })
@@ -57,6 +71,7 @@ export const AuthProvider = ({ children }) => {
       setToken(newToken)
       setUser(data)
       localStorage.setItem('token', newToken)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
 
       return { success: true }
     } catch (error) {
@@ -69,7 +84,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
+      const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, {
         name,
         email,
         password
@@ -79,6 +94,7 @@ export const AuthProvider = ({ children }) => {
       setToken(newToken)
       setUser(data)
       localStorage.setItem('token', newToken)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
 
       return { success: true }
     } catch (error) {
@@ -91,19 +107,32 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT)
+      const token = localStorage.getItem('token')
+      if (token) {
+        await axios.post(API_ENDPOINTS.AUTH.LOGOUT, {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      }
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
       setUser(null)
       setToken(null)
       localStorage.removeItem('token')
+      delete axios.defaults.headers.common['Authorization']
     }
   }
 
   const updateProfile = async (userData) => {
     try {
-      const response = await apiClient.put(API_ENDPOINTS.AUTH.PROFILE, userData)
+      const token = localStorage.getItem('token')
+      const response = await axios.put(API_ENDPOINTS.AUTH.PROFILE, userData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       setUser(response.data.data)
       return { success: true }
     } catch (error) {
@@ -116,9 +145,14 @@ export const AuthProvider = ({ children }) => {
 
   const changePassword = async (currentPassword, newPassword) => {
     try {
-      await apiClient.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
+      const token = localStorage.getItem('token')
+      await axios.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
         currentPassword,
         newPassword
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       return { success: true }
     } catch (error) {

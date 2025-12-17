@@ -40,14 +40,14 @@ const Navbar = () => {
             <Link to="/" className="flex items-center group">
               <div className="relative">
                 <motion.span
-                  className={`text-2xl font-bold bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent`}
+                  className={`text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent`}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 >
                   MiniLink
                 </motion.span>
                 <motion.div
-                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-linear-to-r from-indigo-600 to-violet-600 group-hover:w-full transition-all duration-300"
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-violet-600 group-hover:w-full transition-all duration-300"
                 />
               </div>
             </Link>
@@ -122,7 +122,7 @@ const Navbar = () => {
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-full bg-linear-to-r from-indigo-600 to-violet-600 flex items-center justify-center text-white text-sm font-semibold">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 flex items-center justify-center text-white text-sm font-semibold">
                     {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
                   <span className="hidden sm:inline text-sm font-medium">{user?.name}</span>
@@ -197,7 +197,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-linear-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg transition-all duration-200"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg transition-all duration-200"
                 >
                   Sign Up
                 </Link>
@@ -263,7 +263,7 @@ const Navbar = () => {
                     <Link
                       to="/register"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex-1 px-4 py-2 rounded-lg text-sm font-medium text-center bg-linear-to-r from-indigo-600 to-violet-600 text-white"
+                      className="flex-1 px-4 py-2 rounded-lg text-sm font-medium text-center bg-gradient-to-r from-indigo-600 to-violet-600 text-white"
                     >
                       Sign Up
                     </Link>

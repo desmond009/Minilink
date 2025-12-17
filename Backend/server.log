@@ -1,50 +1,40 @@
-
-> backend@1.0.0 dev
-> nodemon app.js
-
-[33m[nodemon] 3.1.10[39m
-[33m[nodemon] to restart at any time, enter `rs`[39m
-[33m[nodemon] watching path(s): *.*[39m
-[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
-[32m[nodemon] starting `node app.js`[39m
-MongoDB Connected: localhost
-🔌 DB connected successfully
-node:events:485
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: listen EADDRINUSE: address already in use :::3000
-    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
-    at listenInCluster (node:net:1997:12)
-    at Server.listen (node:net:2102:7)
-    at app.listen (/Users/vijender/Desktop/Minilink/Backend/node_modules/express/lib/application.js:635:24)
-    at startServer (file:///Users/vijender/Desktop/Minilink/Backend/app.js:53:13)
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-Emitted 'error' event on Server instance at:
-    at emitErrorNT (node:net:1976:8)
-    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
-  code: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '::',
-  port: 3000
+✅ MongoDB Connected: ac-brvpctk-shard-00-00.4mvx774.mongodb.net
+📊 Database: test
+🔌 Database connected successfully
+🔒 Security middleware enabled
+✅ Server is running on port 3000
+📍 Environment: development
+🌐 API Base URL: https://minilink-fr8u.onrender.com
+Error: {
+  message: 'User with this email already exists',
+  stack: 'Error: User with this email already exists\n' +
+    '    at file:///Users/vijender/Desktop/Minilink/Backend/src/controller/auth.controller.js:21:15\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)',
+  path: '/api/auth/register',
+  method: 'POST'
 }
-
-Node.js v24.4.0
-[31m[nodemon] app crashed - waiting for file changes before starting...[39m
-node:events:485
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: read EIO
-    at TTY.onStreamRead (node:internal/stream_base_commons:216:20)
-Emitted 'error' event on ReadStream instance at:
-    at emitErrorNT (node:internal/streams/destroy:170:8)
-    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
-    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
-  errno: -5,
-  code: 'EIO',
-  syscall: 'read'
+[0mPOST /api/auth/register [33m400[0m 67.571 ms - 365[0m
+Request error: {
+  method: 'POST',
+  path: '/api/auth/register',
+  status: 400,
+  duration: '69ms',
+  ip: '::1',
+  userAgent: 'curl/8.17.0'
 }
-
-Node.js v24.4.0
+Error: {
+  message: 'Invalid email or password',
+  stack: 'Error: Invalid email or password\n' +
+    '    at file:///Users/vijender/Desktop/Minilink/Backend/src/controller/auth.controller.js:79:15',
+  path: '/api/auth/login',
+  method: 'POST'
+}
+[0mPOST /api/auth/login [33m401[0m 192.798 ms - 261[0m
+Request error: {
+  method: 'POST',
+  path: '/api/auth/login',
+  status: 401,
+  duration: '193ms',
+  ip: '::1',
+  userAgent: 'curl/8.17.0'
+}

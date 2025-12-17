@@ -1,4 +1,5 @@
-import { apiClient, API_ENDPOINTS } from '../api/config'
+import axios from 'axios'
+import { API_ENDPOINTS } from './api'
 
 export const urlService = {
   createShortUrl: async (originalUrl, customAlias = null) => {
@@ -7,36 +8,58 @@ export const urlService = {
       payload.customAlias = customAlias
     }
     
-    const response = await apiClient.post(API_ENDPOINTS.LINKS.CREATE, payload)
+    const token = localStorage.getItem('token')
+    const response = await axios.post(API_ENDPOINTS.LINKS.CREATE, payload, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
     return response.data
   },
 
+  getUserUrls: async () => {
+    const token = localStorage.getItem('token')
+    const response = await axios.get(API_ENDPOINTS.LINKS.LIST, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    return response.data
+  },
+
+  // Alias for backward compatibility
   getUserLinks: async () => {
-    const response = await apiClient.get(API_ENDPOINTS.LINKS.LIST)
-    return response.data
-  },
-
-  getUrlById: async (id) => {
-    const response = await apiClient.get(API_ENDPOINTS.LINKS.GET(id))
-    return response.data
-  },
-
-  updateUrl: async (id, data) => {
-    const response = await apiClient.put(API_ENDPOINTS.LINKS.UPDATE(id), data)
+    const token = localStorage.getItem('token')
+    const response = await axios.get(API_ENDPOINTS.LINKS.LIST, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
     return response.data
   },
 
   deleteUrl: async (id) => {
-    const response = await apiClient.delete(API_ENDPOINTS.LINKS.DELETE(id))
+    const token = localStorage.getItem('token')
+    const response = await axios.delete(API_ENDPOINTS.LINKS.DELETE(id), {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
     return response.data
   },
 
-  getAnalytics: async (id) => {
-    const response = await apiClient.get(API_ENDPOINTS.LINKS.ANALYTICS(id))
+  updateUrl: async (id, data) => {
+    const token = localStorage.getItem('token')
+    const response = await axios.put(API_ENDPOINTS.LINKS.UPDATE(id), data, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
     return response.data
   }
 }
 
 export default urlService
+
 
 
