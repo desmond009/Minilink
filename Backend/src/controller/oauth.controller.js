@@ -117,6 +117,7 @@ export const googleCallback = asyncHandler(async (req, res) => {
 	const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 	const redirectUrl = `${frontendUrl}/login/success?token=${encodeURIComponent(token)}`;
 	
+	console.log('OAuth callback - redirecting to:', redirectUrl);
 	return res.redirect(302, redirectUrl);
 });
 
