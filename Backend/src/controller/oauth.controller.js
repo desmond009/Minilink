@@ -9,11 +9,11 @@ const issueToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn:
 
 // Build Google OAuth client
 const getGoogleClient = () => {
-	const client = new OAuth2Client({
-		clientId: process.env.GOOGLE_CLIENT_ID,
-		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-		redirectUri: process.env.GOOGLE_REDIRECT_URI,
-	});
+	const client = new OAuth2Client(
+		process.env.GOOGLE_CLIENT_ID,
+		process.env.GOOGLE_CLIENT_SECRET,
+		process.env.GOOGLE_REDIRECT_URI
+	);
 	return client;
 };
 
@@ -27,6 +27,7 @@ export const getGoogleAuthUrl = asyncHandler(async (req, res) => {
 		scope: ['openid', 'email', 'profile'],
 		access_type: 'offline',
 		prompt: 'consent',
+		redirect_uri: process.env.GOOGLE_REDIRECT_URI,
 	});
 	res.json({ 
 		success: true, 
@@ -50,9 +51,13 @@ export const googleCallback = asyncHandler(async (req, res) => {
 		throw new ApiError(400, 'Missing authorization code');
 	}
 	
-	const client = getGoogleClient();
-	const { tokens } = await client.getToken(code);
-	const idToken = tokens.id_token;
+	try {
+		const client = getGoogleClient();
+		const { tokens } = await client.getToken({
+			code,
+			redirect_uri: process.env.GOOGLE_REDIRECT_URI
+		});
+		const idToken = tokens.id_token;
 	
 	if (!idToken) {
 		throw new ApiError(400, 'Failed to obtain id_token from Google');
