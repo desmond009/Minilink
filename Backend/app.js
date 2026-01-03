@@ -119,6 +119,11 @@ app.get("/api/health", (req, res) => {
 // Redirect route - high rate limit, optimized for speed
 app.get("/r/:shortId", redirectLimiter, redirectToOriginalUrl);
 
+// Direct short URL redirect (for mini.lk/shortId format)
+// This route matches single-segment paths that look like shortIds
+// Pattern: alphanumeric, hyphens, underscores, 3-20 characters
+app.get("/:shortId([a-z0-9_-]{3,20})", redirectLimiter, redirectToOriginalUrl);
+
 // API Routes with rate limiting
 app.use("/api/auth", apiLimiter, AuthRoute);
 app.use("/api/oauth", OAuthRoute);

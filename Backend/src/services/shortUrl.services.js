@@ -224,6 +224,27 @@ export const recordClick = async (shortUrlId, userId, requestData = {}) => {
 };
 
 /**
+ * Get a specific URL by ID (with user verification)
+ */
+export const getUrlById = async (urlId, userId) => {
+    try {
+        const shortUrl = await ShortUrl.findOne({ 
+            _id: urlId, 
+            user: userId 
+        }).select('-__v');
+        
+        if (!shortUrl) {
+            throw new ApiError(404, "URL not found");
+        }
+        
+        return shortUrl;
+    } catch (error) {
+        if (error instanceof ApiError) throw error;
+        throw new ApiError(500, `Failed to fetch URL: ${error.message}`);
+    }
+};
+
+/**
  * Get user's URLs with pagination and filtering
  */
 export const getUserUrls = async (userId, options = {}) => {

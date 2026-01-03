@@ -6,6 +6,8 @@ import { generateQRCodeBuffer } from "../utils/qrCodeGenerator.js";
 /**
  * Create a new short URL
  * POST /api/urls
+ * 
+ * Response returns ONLY shortId - frontend constructs full URL
  */
 export const createShortUrl = asyncHandler(async (req, res) => {
     const { originalUrl, expiresAt, metadata } = req.body;
@@ -24,8 +26,6 @@ export const createShortUrl = asyncHandler(async (req, res) => {
         options
     );
 
-    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-
     res.status(201).json({
         success: true,
         message: "Short URL created successfully",
@@ -33,7 +33,7 @@ export const createShortUrl = asyncHandler(async (req, res) => {
             id: shortUrl._id,
             shortId: shortUrl.shortId,
             originalUrl: shortUrl.originalUrl,
-            shortUrl: `${baseUrl}/r/${shortUrl.shortId}`,
+            // Frontend will construct: `${process.env.BASE_DOMAIN}/${shortId}`
             qrCode: shortUrl.qrCode,
             clicks: shortUrl.clicks,
             isActive: shortUrl.isActive,
@@ -63,8 +63,6 @@ export const getUserUrls = asyncHandler(async (req, res) => {
 
     const result = await urlService.getUserUrls(userId, options);
 
-    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-
     res.status(200).json({
         success: true,
         message: "URLs fetched successfully",
@@ -72,7 +70,6 @@ export const getUserUrls = asyncHandler(async (req, res) => {
             id: url._id,
             shortId: url.shortId,
             originalUrl: url.originalUrl,
-            shortUrl: `${baseUrl}/r/${url.shortId}`,
             customAlias: url.customAlias,
             clicks: url.clicks,
             isActive: url.isActive,
@@ -93,34 +90,26 @@ export const getUrlById = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const userId = req.user._id;
 
-    const shortUrl = await urlService.getUserUrls(userId, { 
-        page: 1, 
-        limit: 1 
-    });
+    const shortUrl = await urlService.getUrlById(id, userId);
 
-    const url = shortUrl.urls.find(u => u._id.toString() === id);
-
-    if (!url) {
+    if (!shortUrl) {
         throw new ApiError(404, "URL not found");
     }
-
-    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
 
     res.status(200).json({
         success: true,
         data: {
-            id: url._id,
-            shortId: url.shortId,
-            originalUrl: url.originalUrl,
-            shortUrl: `${baseUrl}/r/${url.shortId}`,
-            qrCode: url.qrCode,
-            customAlias: url.customAlias,
-            clicks: url.clicks,
-            isActive: url.isActive,
-            expiresAt: url.expiresAt,
-            metadata: url.metadata,
-            createdAt: url.createdAt,
-            updatedAt: url.updatedAt
+            id: shortUrl._id,
+            shortId: shortUrl.shortId,
+            originalUrl: shortUrl.originalUrl,
+            qrCode: shortUrl.qrCode,
+            customAlias: shortUrl.customAlias,
+            clicks: shortUrl.clicks,
+            isActive: shortUrl.isActive,
+            expiresAt: shortUrl.expiresAt,
+            metadata: shortUrl.metadata,
+            createdAt: shortUrl.createdAt,
+            updatedAt: shortUrl.updatedAt
         }
     });
 });
@@ -136,8 +125,6 @@ export const updateShortUrl = asyncHandler(async (req, res) => {
 
     const shortUrl = await urlService.updateShortUrl(id, userId, updateData);
 
-    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-
     res.status(200).json({
         success: true,
         message: "URL updated successfully",
@@ -145,7 +132,6 @@ export const updateShortUrl = asyncHandler(async (req, res) => {
             id: shortUrl._id,
             shortId: shortUrl.shortId,
             originalUrl: shortUrl.originalUrl,
-            shortUrl: `${baseUrl}/r/${shortUrl.shortId}`,
             customAlias: shortUrl.customAlias,
             clicks: shortUrl.clicks,
             isActive: shortUrl.isActive,
@@ -174,32 +160,46 @@ export const deleteShortUrl = asyncHandler(async (req, res) => {
 });
 
 /**
- * Redirect from short URL to original URL
- * GET /r/:shortId
+ * ULTRA-FAST REDIRECT ROUTE
+ * GET /:shortId or GET /r/:shortId
+ * 
+ * Optimized for speed:
+ * - Minimal database query (only shortId + isActive)
+ * - HTTP 301 Moved Permanently for SEO and browser caching
+ * - Async click recording (fire-and-forget)
  */
 export const redirectToOriginalUrl = asyncHandler(async (req, res) => {
     const { shortId } = req.params;
 
+    // Validate shortId format to prevent injection
+    if (!shortId || typeof shortId !== 'string' || !/^[a-z0-9_-]{3,20}$/.test(shortId.toLowerCase())) {
+        throw new ApiError(400, "Invalid short URL format");
+    }
+
+    // Fast lookup with minimal data
     const shortUrl = await urlService.getOriginalUrl(shortId);
 
     if (!shortUrl) {
         throw new ApiError(404, "Short URL not found or expired");
     }
 
-    // Record click event asynchronously (don't block redirect)
-    const requestData = {
+    // Check if expired
+    if (shortUrl.isExpired && shortUrl.isExpired()) {
+        throw new ApiError(410, "Short URL has expired");
+    }
+
+    // Record click event asynchronously (fire and forget)
+    const clickData = {
         ipAddress: req.ip || req.connection.remoteAddress,
         userAgent: req.headers['user-agent'],
         referrer: req.headers['referer'] || req.headers['referrer'],
-        country: null // Can integrate with IP geolocation service
+        timestamp: new Date()
     };
 
-    // Fire and forget - don't await
-    urlService.recordClick(shortUrl._id, shortUrl.user, requestData).catch(err => {
-        console.error('Error recording click:', err);
-    });
+    urlService.recordClick(shortUrl._id, shortUrl.user, clickData)
+        .catch(err => console.error('Error recording click:', err));
 
-    // Redirect immediately
+    // 301 Moved Permanently for SEO and caching
     res.redirect(301, shortUrl.originalUrl);
 });
 
@@ -235,18 +235,18 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
 
     const stats = await urlService.getDashboardStats(userId);
 
-    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-
     res.status(200).json({
         success: true,
         message: "Dashboard stats fetched successfully",
         data: {
-            ...stats,
+            totalUrls: stats.totalUrls,
+            totalClicks: stats.totalClicks,
+            activeUrls: stats.activeUrls,
+            expiredUrls: stats.expiredUrls,
             topUrls: stats.topUrls.map(url => ({
                 id: url._id,
                 shortId: url.shortId,
                 originalUrl: url.originalUrl,
-                shortUrl: `${baseUrl}/r/${url.shortId}`,
                 clicks: url.clicks,
                 createdAt: url.createdAt
             }))
@@ -264,21 +264,21 @@ export const downloadQRCode = asyncHandler(async (req, res) => {
     const { format = 'png' } = req.query;
 
     // Get the URL to verify ownership
-    const result = await urlService.getUserUrls(userId, { page: 1, limit: 1 });
-    const url = result.urls.find(u => u._id.toString() === id);
+    const shortUrl = await urlService.getUrlById(id, userId);
 
-    if (!url) {
+    if (!shortUrl) {
         throw new ApiError(404, "URL not found");
     }
 
-    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-    const fullShortUrl = `${baseUrl}/r/${url.shortId}`;
+    // Construct short URL without hardcoding domain
+    const baseDomain = process.env.BASE_DOMAIN || 'mini.lk';
+    const fullShortUrl = `https://${baseDomain}/${shortUrl.shortId}`;
 
     if (format === 'png') {
         const qrBuffer = await generateQRCodeBuffer(fullShortUrl);
         res.set({
             'Content-Type': 'image/png',
-            'Content-Disposition': `attachment; filename="qrcode-${url.shortId}.png"`
+            'Content-Disposition': `attachment; filename="qrcode-${shortUrl.shortId}.png"`
         });
         res.send(qrBuffer);
     } else {
@@ -286,8 +286,8 @@ export const downloadQRCode = asyncHandler(async (req, res) => {
         res.status(200).json({
             success: true,
             data: {
-                qrCode: url.qrCode,
-                shortId: url.shortId
+                qrCode: shortUrl.qrCode,
+                shortId: shortUrl.shortId
             }
         });
     }

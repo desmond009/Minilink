@@ -1,10 +1,25 @@
 import { customAlphabet } from 'nanoid';
 
-// Base62 alphabet (0-9, a-z, A-Z) - URL safe
-const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+// Base62 alphabet (0-9, a-z) - lowercase for consistency, URL-safe
+// Removed uppercase to avoid confusion (l vs I, O vs 0)
+const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
 
-// Generate short ID with nanoid (collision-resistant)
-export const generateShortId = customAlphabet(ALPHABET, 7);
+/**
+ * Generate collision-resistant short ID using nanoid
+ * - 9 characters = 36^9 possible combinations (~1.6 trillion)
+ * - URL-safe alphanumeric
+ * - Lowercase for consistency
+ */
+export const generateShortId = customAlphabet(ALPHABET, 9);
+
+/**
+ * Validate shortId format
+ * Must be 3-20 characters, alphanumeric with hyphens/underscores only
+ */
+export const isValidShortId = (id) => {
+    if (!id || typeof id !== 'string') return false;
+    return /^[a-z0-9_-]{3,20}$/.test(id.toLowerCase());
+};
 
 // Validate URL format
 export const isValidUrl = (url) => {
