@@ -51,13 +51,12 @@ export const googleCallback = asyncHandler(async (req, res) => {
 		throw new ApiError(400, 'Missing authorization code');
 	}
 	
-	try {
-		const client = getGoogleClient();
-		const { tokens } = await client.getToken({
-			code,
-			redirect_uri: process.env.GOOGLE_REDIRECT_URI
-		});
-		const idToken = tokens.id_token;
+	const client = getGoogleClient();
+	const { tokens } = await client.getToken({
+		code,
+		redirect_uri: process.env.GOOGLE_REDIRECT_URI
+	});
+	const idToken = tokens.id_token;
 	
 	if (!idToken) {
 		throw new ApiError(400, 'Failed to obtain id_token from Google');
