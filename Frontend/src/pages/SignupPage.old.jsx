@@ -106,7 +106,7 @@ const SignupPage = () => {
       {/* Left Side - Visual (Hidden on Mobile/Tablet) */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         {/* Gradient Background */}
-        <div className={`absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700`} />
+        <div className={`absolute inset-0 bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700`} />
 
         {/* Animated Blobs */}
         <motion.div
@@ -153,7 +153,7 @@ const SignupPage = () => {
                 }}
                 className="flex items-center gap-3 backdrop-blur-md bg-white/10 border border-white/20 rounded-lg px-4 py-3"
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <Check className="text-emerald-400" size={20} />
                 </div>
                 <span className="text-white font-medium">{feature}</span>
@@ -170,7 +170,7 @@ const SignupPage = () => {
           >
             <p className="text-sm font-medium mb-4 italic">"MiniLink has transformed how we share links. Simple, fast, and reliable."</p>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500" />
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-emerald-400 to-teal-500" />
               <div>
                 <p className="font-semibold text-sm">Sarah Mitchell</p>
                 <p className="text-white/60 text-xs">Marketing Director</p>
@@ -193,7 +193,7 @@ const SignupPage = () => {
           {/* Logo */}
           <motion.div variants={itemVariants} className="mb-8">
             <Link to="/" className="flex items-center group">
-              <span className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+              <span className="text-3xl font-bold bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                 MiniLink
               </span>
             </Link>
@@ -361,7 +361,7 @@ const SignupPage = () => {
               className={`w-full py-3 rounded-lg font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 mt-6 ${
                 loading
                   ? 'bg-indigo-500 cursor-not-allowed opacity-70'
-                  : 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:shadow-lg hover:shadow-indigo-500/30'
+                  : 'bg-linear-to-r from-indigo-600 to-violet-600 hover:shadow-lg hover:shadow-indigo-500/30'
               }`}
             >
               {loading ? (

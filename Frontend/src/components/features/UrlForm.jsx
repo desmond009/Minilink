@@ -150,7 +150,7 @@ const UrlForm = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className={`text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent mb-2`}
+              className={`text-3xl md:text-4xl font-bold bg-linear-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent mb-2`}
             >
               Shorten Your Links
             </motion.h2>
@@ -203,8 +203,8 @@ const UrlForm = () => {
                   whileTap={{ scale: isLoading || !longUrl.trim() ? 1 : 0.98 }}
                   className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 rounded-xl font-semibold text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                     isLoading || !longUrl.trim()
-                      ? 'bg-gradient-to-r from-indigo-600 to-violet-600'
-                      : 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:shadow-lg hover:shadow-indigo-500/30'
+                      ? 'bg-linear-to-r from-indigo-600 to-violet-600'
+                      : 'bg-linear-to-r from-indigo-600 to-violet-600 hover:shadow-lg hover:shadow-indigo-500/30'
                   } text-white`}
                 >
                   {isLoading ? (
@@ -248,12 +248,12 @@ const UrlForm = () => {
                   transition={{ duration: 0.4 }}
                   className={`rounded-xl border-2 p-6 transition-colors duration-300 ${
                     isDark
-                      ? 'bg-gradient-to-br from-green-900/20 to-emerald-900/20 border-green-500/30'
-                      : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'
+                      ? 'bg-linear-to-br from-green-900/20 to-emerald-900/20 border-green-500/30'
+                      : 'bg-linear-to-br from-green-50 to-emerald-50 border-green-200'
                   }`}
                 >
                   <div className="flex items-start space-x-3 mb-6">
-                    <CheckCircle2 className="text-green-500 flex-shrink-0 mt-1" size={24} />
+                    <CheckCircle2 className="text-green-500 shrink-0 mt-1" size={24} />
                     <div className="flex-1">
                       <h3 className={`font-bold text-lg mb-1 ${
                         isDark ? 'text-green-400' : 'text-green-700'
@@ -403,7 +403,7 @@ const UrlForm = () => {
                 <h3 className={`text-lg font-bold mb-4 flex items-center space-x-2 ${
                   isDark ? 'text-slate-200' : 'text-slate-800'
                 }`}>
-                  <div className="w-2 h-2 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-full" />
+                  <div className="w-2 h-2 bg-linear-to-r from-indigo-600 to-violet-600 rounded-full" />
                   <span>Recent Links</span>
                 </h3>
                 <div className="space-y-3">
@@ -480,7 +480,7 @@ const UrlForm = () => {
                   : 'bg-white/50 border border-slate-200/50'
               }`}
             >
-              <p className={`text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent`}>
+              <p className={`text-2xl md:text-3xl font-bold bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent`}>
                 {stat.value}
               </p>
               <p className={`text-sm font-medium mt-1 transition-colors duration-300 ${

@@ -128,7 +128,7 @@ const QRCodesPage = () => {
             </div>
           </div>
 
-          <div className="space-y-2 max-h-[600px] overflow-y-auto">
+          <div className="space-y-2 max-h-150 overflow-y-auto">
             {filteredLinks.length === 0 ? (
               <p className={`text-sm text-center py-8 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 No links found
@@ -140,7 +140,7 @@ const QRCodesPage = () => {
                   onClick={() => setSelectedLink(link)}
                   className={`w-full p-4 rounded-xl text-left transition-all ${
                     selectedLink?._id === link._id
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                       : isDark
                       ? 'bg-gray-800 hover:bg-gray-750 text-gray-300'
                       : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
@@ -198,7 +198,7 @@ const QRCodesPage = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={downloadQRCode}
-                  className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all"
+                  className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all"
                 >
                   <Download className="w-5 h-5" />
                   <span>Download QR Code</span>

@@ -160,7 +160,7 @@ const AnalyticsPage = () => {
               } shadow-lg border ${isDark ? 'border-gray-800' : 'border-gray-200'}`}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl bg-gradient-to-br ${colorClasses[stat.color]}`}>
+                <div className={`p-3 rounded-xl bg-linear-to-br ${colorClasses[stat.color]}`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className={`flex items-center space-x-1 text-sm font-semibold ${
@@ -253,7 +253,7 @@ const AnalyticsPage = () => {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white bg-gradient-to-br ${COLORS[index] || '#3B82F6'}`}
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white bg-linear-to-br ${COLORS[index] || '#3B82F6'}`}
                         style={{ background: COLORS[index] }}
                       >
                         {index + 1}
@@ -278,7 +278,7 @@ const AnalyticsPage = () => {
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
                     <div
-                      className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+                      className="h-2 rounded-full bg-linear-to-r from-blue-500 to-purple-500"
                       style={{
                         width: `${totalClicks > 0 ? ((link.clicks || 0) / totalClicks) * 100 : 0}%`
                       }}

@@ -22,11 +22,11 @@ const Card = ({
       ? 'bg-slate-800/30 backdrop-blur-xl border border-slate-700/50'
       : 'bg-white/30 backdrop-blur-xl border border-slate-200/50',
     gradient: isDark
-      ? 'bg-gradient-to-br from-indigo-900/20 to-violet-900/20 border border-indigo-700/30'
-      : 'bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-200',
+      ? 'bg-linear-to-br from-indigo-900/20 to-violet-900/20 border border-indigo-700/30'
+      : 'bg-linear-to-br from-indigo-50 to-violet-50 border border-indigo-200',
     success: isDark
-      ? 'bg-gradient-to-br from-green-900/20 to-emerald-900/20 border border-green-500/30'
-      : 'bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200',
+      ? 'bg-linear-to-br from-green-900/20 to-emerald-900/20 border border-green-500/30'
+      : 'bg-linear-to-br from-green-50 to-emerald-50 border border-green-200',
   }
 
   const MotionDiv = hover ? motion.div : 'div'

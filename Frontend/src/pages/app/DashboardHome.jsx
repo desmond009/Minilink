@@ -178,7 +178,7 @@ const DashboardHome = () => {
               } shadow-lg border ${isDark ? 'border-gray-800' : 'border-gray-200'}`}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl bg-gradient-to-br ${colorClasses[stat.color]}`}>
+                <div className={`p-3 rounded-xl bg-linear-to-br ${colorClasses[stat.color]}`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-green-500 text-sm font-semibold">{stat.trend}</span>
@@ -205,7 +205,7 @@ const DashboardHome = () => {
           } shadow-lg border ${isDark ? 'border-gray-800' : 'border-gray-200'}`}
         >
           <div className="flex items-center space-x-3 mb-6">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500">
+            <div className="p-2 rounded-lg bg-linear-to-br from-blue-500 to-purple-500">
               <Plus className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -242,7 +242,7 @@ const DashboardHome = () => {
             <button
               type="submit"
               disabled={isCreating}
-              className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full py-3 px-6 bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isCreating ? (
                 <span className="flex items-center justify-center">

@@ -142,12 +142,12 @@ const Dashboard = () => {
             <div className="max-w-4xl">
               <AnimatedCard className={`${isDark ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-xl shadow-2xl border ${isDark ? 'border-gray-700/50' : 'border-white/20'} p-6 mb-6`}>
                 <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                  <div className="w-10 h-10 bg-linear-to-r from-indigo-600 to-violet-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
                     ML
                   </div>
                   <div className="ml-3">
                     <motion.h2 
-                      className={`text-lg font-bold ${isDark ? 'text-white' : 'bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'}`}
+                      className={`text-lg font-bold ${isDark ? 'text-white' : 'bg-linear-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'}`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 }}
@@ -188,7 +188,7 @@ const Dashboard = () => {
                     <motion.button
                       type="submit"
                       disabled={isCreating}
-                      className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white py-3 px-6 rounded-lg font-bold text-sm hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-50 shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="bg-linear-to-r from-blue-600 via-purple-600 to-blue-700 text-white py-3 px-6 rounded-lg font-bold text-sm hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-50 shadow-lg hover:shadow-xl transition-all duration-200"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -222,7 +222,7 @@ const Dashboard = () => {
                 <AnimatePresence>
                   {createdLink && (
                     <motion.div 
-                      className={`mt-6 p-4 ${isDark ? 'bg-green-900/30 border-green-700/50' : 'bg-gradient-to-r from-green-50/90 to-blue-50/90 border-green-200/50'} backdrop-blur-sm rounded-lg border-2`}
+                      className={`mt-6 p-4 ${isDark ? 'bg-green-900/30 border-green-700/50' : 'bg-linear-to-r from-green-50/90 to-blue-50/90 border-green-200/50'} backdrop-blur-sm rounded-lg border-2`}
                       initial={{ opacity: 0, scale: 0.9, y: 20 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9, y: -20 }}
@@ -243,7 +243,7 @@ const Dashboard = () => {
                           />
                           <motion.button
                             onClick={async () => { await reliableCopy(createdLink.shortUrl); }}
-                            className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-semibold text-xs"
+                            className="px-4 py-2 bg-linear-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg font-semibold text-xs"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
@@ -256,7 +256,7 @@ const Dashboard = () => {
                             href={createdLink.shortUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-md font-medium text-xs"
+                            className="inline-flex items-center px-3 py-1 bg-linear-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-md font-medium text-xs"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
@@ -266,7 +266,7 @@ const Dashboard = () => {
                           
                           <motion.button
                             onClick={() => setShowQRCode(true)}
-                            className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-md font-medium text-xs"
+                            className="inline-flex items-center px-3 py-1 bg-linear-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-md font-medium text-xs"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
@@ -292,7 +292,7 @@ const Dashboard = () => {
             transition={{ duration: 0.6 }}
           >
             <motion.div 
-              className="bg-gradient-to-r from-blue-500/90 to-purple-600/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
+              className="bg-linear-to-r from-blue-500/90 to-purple-600/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -302,7 +302,7 @@ const Dashboard = () => {
             </motion.div>
 
             <AnimatedCard className={`${isDark ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-xl shadow-2xl border ${isDark ? 'border-gray-700/50' : 'border-white/20'} overflow-hidden`}>
-              <div className={`p-4 border-b ${isDark ? 'border-gray-700/50 bg-gray-700/30' : 'border-gray-200/50 bg-gradient-to-r from-gray-50/90 to-blue-50/90'} backdrop-blur-sm`}>
+              <div className={`p-4 border-b ${isDark ? 'border-gray-700/50 bg-gray-700/30' : 'border-gray-200/50 bg-linear-to-r from-gray-50/90 to-blue-50/90'} backdrop-blur-sm`}>
                 <div className="flex flex-col md:flex-row items-center justify-between gap-3">
                   <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>📊 Link History</h3>
                   <div className="flex items-center space-x-3">
@@ -330,7 +330,7 @@ const Dashboard = () => {
                   </div>
                 ) : links.length === 0 ? (
                   <div className="p-8 text-center">
-                    <div className={`w-16 h-16 ${isDark ? 'bg-gray-700' : 'bg-gradient-to-r from-gray-100 to-gray-200'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                    <div className={`w-16 h-16 ${isDark ? 'bg-gray-700' : 'bg-linear-to-r from-gray-100 to-gray-200'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                       <span className="text-2xl">🔗</span>
                     </div>
                     <h3 className={`text-lg font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1`}>No links created yet</h3>
@@ -340,14 +340,14 @@ const Dashboard = () => {
                   links.map((link, index) => (
                     <motion.div 
                       key={link._id || link.id || `link-${index}`} 
-                      className={`p-4 ${isDark ? 'hover:bg-gray-700/30' : 'hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50'} transition-all duration-300 group`}
+                      className={`p-4 ${isDark ? 'hover:bg-gray-700/30' : 'hover:bg-linear-to-r hover:from-blue-50/50 hover:to-purple-50/50'} transition-all duration-300 group`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3 flex-1">
-                          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                          <div className="w-8 h-8 bg-linear-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                             {index + 1}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -408,7 +408,7 @@ const Dashboard = () => {
             transition={{ duration: 0.6 }}
           >
             <motion.div 
-              className="bg-gradient-to-r from-purple-500/90 to-pink-600/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
+              className="bg-linear-to-r from-purple-500/90 to-pink-600/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -419,7 +419,7 @@ const Dashboard = () => {
 
             <AnimatedCard className={`${isDark ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-xl shadow-2xl border ${isDark ? 'border-gray-700/50' : 'border-white/20'} p-6`}>
               <div className="text-center">
-                <div className={`w-24 h-24 ${isDark ? 'bg-gray-700' : 'bg-gradient-to-r from-purple-100 to-pink-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                <div className={`w-24 h-24 ${isDark ? 'bg-gray-700' : 'bg-linear-to-r from-purple-100 to-pink-100'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                   <span className="text-4xl">📱</span>
                 </div>
                 <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>QR Code Generator</h3>
@@ -430,7 +430,7 @@ const Dashboard = () => {
                     {links.slice(0, 6).map((link, index) => (
                       <motion.div 
                         key={link._id || link.id || `link-${index}`} 
-                        className={`${isDark ? 'bg-gray-700/50 border-gray-600/50' : 'bg-gradient-to-br from-white/80 to-gray-50/80 border-gray-200/50'} backdrop-blur-sm rounded-lg p-4 border hover:shadow-lg transition-all duration-300`}
+                        className={`${isDark ? 'bg-gray-700/50 border-gray-600/50' : 'bg-linear-to-br from-white/80 to-gray-50/80 border-gray-200/50'} backdrop-blur-sm rounded-lg p-4 border hover:shadow-lg transition-all duration-300`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
@@ -441,7 +441,7 @@ const Dashboard = () => {
                           <p className="font-bold text-blue-600 mb-3 text-sm">{`${SHORT_BASE_URL}${SHORT_PATH_PREFIX}/${link.short_id}`}</p>
                           <motion.button
                             onClick={() => setShowQRCode(true)}
-                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 px-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 font-medium text-xs"
+                            className="w-full bg-linear-to-r from-purple-500 to-pink-500 text-white py-2 px-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 font-medium text-xs"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
@@ -456,7 +456,7 @@ const Dashboard = () => {
                     <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'} mb-3 text-sm`}>No links available to generate QR codes</p>
                     <motion.button
                       onClick={() => setActiveTab('home')}
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium text-sm"
+                      className="bg-linear-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium text-sm"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -478,7 +478,7 @@ const Dashboard = () => {
             transition={{ duration: 0.6 }}
           >
             <motion.div 
-              className="bg-gradient-to-r from-green-500/90 to-teal-600/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
+              className="bg-linear-to-r from-green-500/90 to-teal-600/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -525,7 +525,7 @@ const Dashboard = () => {
             transition={{ duration: 0.6 }}
           >
             <motion.div 
-              className="bg-gradient-to-r from-gray-600/90 to-gray-800/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
+              className="bg-linear-to-r from-gray-600/90 to-gray-800/90 backdrop-blur-xl rounded-xl p-6 text-white shadow-2xl"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -548,7 +548,7 @@ const Dashboard = () => {
                       checked={isDark}
                       onChange={toggleTheme}
                     />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
 
@@ -559,7 +559,7 @@ const Dashboard = () => {
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" className="sr-only peer" defaultChecked />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
 
@@ -586,7 +586,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50'} relative overflow-hidden transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-linear-to-br from-gray-50 via-blue-50 to-purple-50'} relative overflow-hidden transition-colors duration-300`}>
       
       {/* Sidebar */}
       <motion.div 
@@ -598,16 +598,16 @@ const Dashboard = () => {
         <div className="p-4">
           {/* Logo */}
           <div className="flex items-center mb-6">
-            <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-10 h-10 bg-linear-to-r from-indigo-600 to-violet-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
               ML
             </div>
-            <span className={`text-lg font-bold ${isDark ? 'text-white' : 'bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'} ml-3`}>MiniLink</span>
+            <span className={`text-lg font-bold ${isDark ? 'text-white' : 'bg-linear-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'} ml-3`}>MiniLink</span>
           </div>
 
           {/* Create New Button */}
           <motion.button 
             onClick={() => setActiveTab('home')}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-bold text-sm mb-6 shadow-lg hover:shadow-xl transition-all duration-200"
+            className="w-full bg-linear-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-bold text-sm mb-6 shadow-lg hover:shadow-xl transition-all duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -623,10 +623,10 @@ const Dashboard = () => {
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center py-3 px-4 rounded-xl font-medium transition-all duration-300 text-sm ${
                   activeTab === item.id
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                    ? 'bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg'
                     : isDark 
-                      ? 'text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-white'
-                      : 'text-gray-700 hover:bg-gradient-to-r hover:from-gray-100 hover:to-blue-50 hover:text-blue-600'
+                      ? 'text-gray-300 hover:bg-linear-to-r hover:from-gray-700 hover:to-gray-600 hover:text-white'
+                      : 'text-gray-700 hover:bg-linear-to-r hover:from-gray-100 hover:to-blue-50 hover:text-blue-600'
                 }`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -653,7 +653,7 @@ const Dashboard = () => {
         >
           <div className="px-6 py-4 flex items-center justify-between">
             <motion.h1 
-              className={`text-xl font-bold ${isDark ? 'text-white' : 'bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'}`}
+              className={`text-xl font-bold ${isDark ? 'text-white' : 'bg-linear-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent'}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -685,12 +685,12 @@ const Dashboard = () => {
               </motion.button>
               
               <motion.div 
-                className={`flex items-center space-x-2 ${isDark ? 'bg-gray-700/80' : 'bg-gradient-to-r from-gray-100/80 to-blue-100/80'} backdrop-blur-sm rounded-xl px-3 py-2`}
+                className={`flex items-center space-x-2 ${isDark ? 'bg-gray-700/80' : 'bg-linear-to-r from-gray-100/80 to-blue-100/80'} backdrop-blur-sm rounded-xl px-3 py-2`}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-8 h-8 bg-linear-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-sm">
                     {user?.name?.charAt(0) || 'U'}
                   </span>

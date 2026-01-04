@@ -12,7 +12,7 @@ const TestimonialsSection = () => {
       author: "Melody Park",
       position: "Marketing Lead at Smalls",
       initials: "MP",
-      avatar: "bg-gradient-to-r from-orange-400 to-red-400"
+      avatar: "bg-linear-to-r from-orange-400 to-red-400"
     },
     {
       id: 2,
@@ -20,7 +20,7 @@ const TestimonialsSection = () => {
       author: "David Chen",
       position: "Digital Marketing Manager at TechFlow",
       initials: "DC",
-      avatar: "bg-gradient-to-r from-blue-400 to-indigo-500"
+      avatar: "bg-linear-to-r from-blue-400 to-indigo-500"
     },
     {
       id: 3,
@@ -28,7 +28,7 @@ const TestimonialsSection = () => {
       author: "Sarah Johnson",
       position: "Growth Manager at StartupXYZ",
       initials: "SJ",
-      avatar: "bg-gradient-to-r from-purple-400 to-pink-500"
+      avatar: "bg-linear-to-r from-purple-400 to-pink-500"
     },
     {
       id: 4,
@@ -36,7 +36,7 @@ const TestimonialsSection = () => {
       author: "Michael Rodriguez",
       position: "CTO at InnovateCorp",
       initials: "MR",
-      avatar: "bg-gradient-to-r from-green-400 to-teal-500"
+      avatar: "bg-linear-to-r from-green-400 to-teal-500"
     },
     {
       id: 5,
@@ -44,7 +44,7 @@ const TestimonialsSection = () => {
       author: "Emily Watson",
       position: "Product Manager at CreativeStudio",
       initials: "EW",
-      avatar: "bg-gradient-to-r from-pink-400 to-rose-500"
+      avatar: "bg-linear-to-r from-pink-400 to-rose-500"
     }
   ]
 
@@ -81,7 +81,7 @@ const TestimonialsSection = () => {
   }, [currentIndex])
 
   return (
-    <section className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 py-20 relative overflow-hidden">
+    <section className="bg-linear-to-br from-orange-500 via-red-500 to-pink-500 py-20 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-10">
         <motion.div 
@@ -152,7 +152,7 @@ const TestimonialsSection = () => {
           >
             <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-12 relative overflow-hidden border border-white/20">
               {/* Decorative background pattern */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-100 to-red-100 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-orange-100 to-red-100 rounded-full -translate-y-16 translate-x-16"></div>
               
               <div className="relative">
                 <div className="flex items-start">

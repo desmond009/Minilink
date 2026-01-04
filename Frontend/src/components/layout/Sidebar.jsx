@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className={`p-6 border-b ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
                   <span className="text-white font-bold text-lg">ML</span>
                 </div>
                 <div>
@@ -85,7 +85,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   onClick={onClose}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                     active
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                       : isDark
                       ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
@@ -102,7 +102,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className={`p-4 border-t ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
             <div className={`p-3 rounded-xl ${isDark ? 'bg-gray-800' : 'bg-gray-50'} mb-3`}>
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-sm">
                     {user?.name?.charAt(0).toUpperCase() || 'U'}
                   </span>

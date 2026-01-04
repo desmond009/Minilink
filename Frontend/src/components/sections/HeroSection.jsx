@@ -14,7 +14,7 @@ const HeroSection = () => {
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 rounded-full mix-blend-multiply filter blur-3xl"
+          className="absolute top-0 left-1/4 w-96 h-96 bg-linear-to-br from-indigo-500/20 to-violet-500/20 rounded-full mix-blend-multiply filter blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             x: [-50, 50, -50],
@@ -26,7 +26,7 @@ const HeroSection = () => {
           }}
         />
         <motion.div
-          className="absolute top-1/2 right-1/4 w-96 h-96 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl"
+          className="absolute top-1/2 right-1/4 w-96 h-96 bg-linear-to-br from-violet-500/20 to-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             x: [50, -50, 50],
@@ -38,7 +38,7 @@ const HeroSection = () => {
           }}
         />
         <motion.div
-          className="absolute -bottom-32 left-1/3 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full mix-blend-multiply filter blur-3xl"
+          className="absolute -bottom-32 left-1/3 w-96 h-96 bg-linear-to-br from-purple-500/20 to-pink-500/20 rounded-full mix-blend-multiply filter blur-3xl"
           animate={{
             scale: [1, 1.1, 1],
             y: [100, -100, 100],
@@ -78,8 +78,8 @@ const HeroSection = () => {
         >
           <h1 className={`text-5xl md:text-7xl font-bold mb-6 leading-tight ${
             isDark
-              ? 'bg-gradient-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
-              : 'bg-gradient-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
+              ? 'bg-linear-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
+              : 'bg-linear-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
           }`}>
             Shorten Your Links,
             <br />
@@ -103,7 +103,7 @@ const HeroSection = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 rounded-xl font-semibold text-lg bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-2xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center space-x-2 group"
+              className="px-8 py-4 rounded-xl font-semibold text-lg bg-linear-to-r from-indigo-600 to-violet-600 text-white hover:shadow-2xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center space-x-2 group"
             >
               <span>Get Started Free</span>
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -161,7 +161,7 @@ const HeroSection = () => {
                     : 'bg-white/50 border-slate-200 hover:border-indigo-300'
                 }`}
               >
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-indigo-600 to-violet-600 flex items-center justify-center mb-4">
                   <Icon size={24} className="text-white" />
                 </div>
                 <h3 className={`text-lg font-bold mb-2 transition-colors duration-300 ${

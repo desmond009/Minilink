@@ -57,7 +57,7 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <Link to="/" className="flex items-center mb-4 group">
-              <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+              <div className="text-2xl font-bold bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                 MiniLink
               </div>
             </Link>

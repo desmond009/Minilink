@@ -97,7 +97,7 @@ const SettingsPage = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${
                     activeTab === tab.id
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                       : isDark
                       ? 'text-gray-300 hover:bg-gray-800'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -128,7 +128,7 @@ const SettingsPage = () => {
               <form onSubmit={handleProfileUpdate} className="space-y-6">
                 {/* Profile Picture */}
                 <div className="flex items-center space-x-6">
-                  <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-24 h-24 bg-linear-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-3xl">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
@@ -193,7 +193,7 @@ const SettingsPage = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all"
+                    className="px-6 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all"
                   >
                     {loading ? 'Saving...' : 'Save Changes'}
                   </button>
@@ -273,7 +273,7 @@ const SettingsPage = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all"
+                    className="px-6 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 transition-all"
                   >
                     {loading ? 'Updating...' : 'Update Password'}
                   </button>

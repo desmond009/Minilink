@@ -40,8 +40,8 @@ const Home = () => {
             >
               <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${
                 isDark
-                  ? 'bg-gradient-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
-                  : 'bg-gradient-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
+                  ? 'bg-linear-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
+                  : 'bg-linear-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
               }`}>
                 Why MiniLink?
               </h2>
@@ -97,7 +97,7 @@ const Home = () => {
                       : 'bg-white border-slate-200 hover:border-indigo-300'
                   }`}
                 >
-                  <div className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent mb-4">
+                  <div className="text-4xl font-bold bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent mb-4">
                     {feature.number}
                   </div>
                   <h3 className={`text-xl font-bold mb-3 transition-colors duration-300 ${
@@ -128,8 +128,8 @@ const Home = () => {
             >
               <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${
                 isDark
-                  ? 'bg-gradient-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
-                  : 'bg-gradient-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
+                  ? 'bg-linear-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
+                  : 'bg-linear-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
               }`}>
                 Perfect for Everyone
               </h2>
@@ -190,7 +190,7 @@ const Home = () => {
 
         {/* CTA Section */}
         <section className={`py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
-          isDark ? 'bg-gradient-to-r from-indigo-900/20 to-violet-900/20' : 'bg-gradient-to-r from-indigo-50 to-violet-50'
+          isDark ? 'bg-linear-to-r from-indigo-900/20 to-violet-900/20' : 'bg-linear-to-r from-indigo-50 to-violet-50'
         }`}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -201,8 +201,8 @@ const Home = () => {
           >
             <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${
               isDark
-                ? 'bg-gradient-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
-                : 'bg-gradient-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
+                ? 'bg-linear-to-r from-white via-indigo-200 to-violet-400 bg-clip-text text-transparent'
+                : 'bg-linear-to-r from-slate-900 via-indigo-600 to-violet-600 bg-clip-text text-transparent'
             }`}>
               Ready to Shorten Your Links?
             </h2>
