@@ -1,5 +1,32 @@
 import axios from 'axios'
 import { API_ENDPOINTS } from './api'
+import { SHORT_BASE_URL } from '../utils/constants'
+
+/**
+ * Transform API response to include constructed shortUrl
+ * Backend returns shortId, frontend needs full short URL
+ */
+const transformUrlData = (data) => {
+  if (!data) return data
+  
+  // Single URL object
+  if (data.shortId && !data.shortUrl) {
+    return {
+      ...data,
+      shortUrl: `${SHORT_BASE_URL}/${data.shortId}`
+    }
+  }
+  
+  return data
+}
+
+/**
+ * Transform array of URL objects
+ */
+const transformUrlArray = (urls) => {
+  if (!Array.isArray(urls)) return urls
+  return urls.map(transformUrlData)
+}
 
 export const urlService = {
   createShortUrl: async (originalUrl) => {
@@ -12,6 +39,12 @@ export const urlService = {
           'Authorization': `Bearer ${token}`
         }
       })
+      
+      // Transform response to include shortUrl
+      if (response.data && response.data.data) {
+        response.data.data = transformUrlData(response.data.data)
+      }
+      
       return response.data
     } catch (error) {
       // Re-throw with better error message handling
@@ -35,6 +68,12 @@ export const urlService = {
         'Authorization': `Bearer ${token}`
       }
     })
+    
+    // Transform response to include shortUrl for each link
+    if (response.data && response.data.data) {
+      response.data.data = transformUrlArray(response.data.data)
+    }
+    
     return response.data
   },
 
@@ -46,6 +85,12 @@ export const urlService = {
         'Authorization': `Bearer ${token}`
       }
     })
+    
+    // Transform response to include shortUrl for each link
+    if (response.data && response.data.data) {
+      response.data.data = transformUrlArray(response.data.data)
+    }
+    
     return response.data
   },
 
@@ -66,6 +111,12 @@ export const urlService = {
         'Authorization': `Bearer ${token}`
       }
     })
+    
+    // Transform response to include shortUrl
+    if (response.data && response.data.data) {
+      response.data.data = transformUrlData(response.data.data)
+    }
+    
     return response.data
   }
 }

@@ -30,7 +30,16 @@ const Dashboard = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       })
-      setLinks(response.data.data || [])
+      
+      // Transform links to include shortUrl
+      const links = (response.data.data || []).map(link => {
+        if (link.shortId && !link.shortUrl) {
+          return { ...link, shortUrl: `${SHORT_BASE_URL}/${link.shortId}` }
+        }
+        return link
+      })
+      
+      setLinks(links)
     } catch (error) {
       console.error('Error fetching links:', error)
       toast.error('Failed to fetch links')
@@ -62,17 +71,23 @@ const Dashboard = () => {
       })
 
       if (response.data.success) {
+        // Construct shortUrl from shortId if not present
+        const linkData = response.data.data
+        if (linkData.shortId && !linkData.shortUrl) {
+          linkData.shortUrl = `${SHORT_BASE_URL}/${linkData.shortId}`
+        }
+        
         // Check if alias was automatically varied
-        if (response.data.data.aliasVariated) {
+        if (linkData.aliasVariated) {
           toast.success(
-            `Link created! Your alias "${response.data.data.originalRequestedAlias}" was taken, so we used "${response.data.data.shortId}" instead.`,
+            `Link created! Your alias "${linkData.originalRequestedAlias}" was taken, so we used "${linkData.shortId}" instead.`,
             { duration: 6000 }
           )
         } else {
           toast.success('Link created successfully!')
         }
         
-        setCreatedLink(response.data.data)
+        setCreatedLink(linkData)
         setUrlForm({ originalUrl: '' })
         fetchLinks() // Refresh the links list
       }

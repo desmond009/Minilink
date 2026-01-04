@@ -10,6 +10,7 @@ import QRCodeGenerator from './QRCodeGenerator'
 import QRCodeScanner from './QRCodeScanner'
 import { reliableCopy } from '../../utils/helpers/clipboard'
 import { Link as LinkIcon, Copy, QrCode, Loader, CheckCircle2, ExternalLink } from 'lucide-react'
+import { SHORT_BASE_URL } from '../../utils/constants'
 
 const UrlForm = () => {
   const [longUrl, setLongUrl] = useState('')
@@ -19,6 +20,7 @@ const UrlForm = () => {
   const [showQRCode, setShowQRCode] = useState(false)
   const [showScanner, setShowScanner] = useState(false)
   const [recentLinks, setRecentLinks] = useState([])
+  const [loadingLinks, setLoadingLinks] = useState(false)
   
   const { isAuthenticated, user } = useAuth()
   const { isDark } = useTheme()
@@ -35,12 +37,31 @@ const UrlForm = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase()
   }
 
+  // Fetch recent links from backend when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchRecentLinks()
+    }
+  }, [isAuthenticated])
+
+  const fetchRecentLinks = async () => {
+    setLoadingLinks(true)
+    try {
+      const response = await urlService.getUserLinks()
+      if (response.data) {
+        setRecentLinks(response.data.slice(0, 5))
+      }
+    } catch (error) {
+      console.error('Error fetching recent links:', error)
+    } finally {
+      setLoadingLinks(false)
+    }
+  }
+
   useEffect(() => {
     if (shortUrl && isAuthenticated) {
-      setRecentLinks([
-        { original: longUrl, short: shortUrl, timestamp: new Date() },
-        ...recentLinks.slice(0, 4)
-      ])
+      // Refresh recent links after creating a new one
+      fetchRecentLinks()
     }
   }, [shortUrl, isAuthenticated])
 
@@ -63,11 +84,13 @@ const UrlForm = () => {
     try {
       if (isAuthenticated) {
         const data = await urlService.createShortUrl(longUrl)
-        setShortUrl(data.data.shortUrl)
+        // Ensure shortUrl is set from the response
+        const constructedUrl = data.data.shortUrl || `${SHORT_BASE_URL}/${data.data.shortId}`
+        setShortUrl(constructedUrl)
         toast.success('URL shortened successfully!')
       } else {
         const shortId = generateShortId()
-        const tempShortUrl = (import.meta.env.VITE_SHORT_BASE_URL || 'https://mini.lk') + `/${shortId}`
+        const tempShortUrl = `${SHORT_BASE_URL}/${shortId}`
         
         addTempLink(longUrl, tempShortUrl, shortId)
         setShortUrl(tempShortUrl)
@@ -384,47 +407,53 @@ const UrlForm = () => {
                   <span>Recent Links</span>
                 </h3>
                 <div className="space-y-3">
-                  {recentLinks.slice(0, 3).map((link, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className={`flex items-center justify-between p-3 rounded-lg transition-colors duration-300 ${
-                        isDark
-                          ? 'bg-slate-800/50 hover:bg-slate-800'
-                          : 'bg-white hover:bg-slate-100'
-                      }`}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-300 ${
-                          isDark ? 'text-slate-500' : 'text-slate-600'
-                        }`}>
-                          {truncateUrl(link.original, 35)}
-                        </p>
-                        <p className={`text-sm font-mono ${
-                          isDark ? 'text-indigo-400' : 'text-indigo-600'
-                        }`}>
-                          {link.short}
-                        </p>
-                      </div>
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          reliableCopy(link.short)
-                          toast.success('Copied!')
-                        }}
-                        className={`p-2 rounded-lg transition-colors duration-200 ml-2 flex-shrink-0 ${
+                  {recentLinks.slice(0, 3).map((link, idx) => {
+                    // Ensure we have the shortUrl constructed
+                    const displayUrl = link.shortUrl || (link.shortId ? `${SHORT_BASE_URL}/${link.shortId}` : link.short)
+                    const originalUrl = link.originalUrl || link.original
+                    
+                    return (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className={`flex items-center justify-between p-3 rounded-lg transition-colors duration-300 ${
                           isDark
-                            ? 'hover:bg-slate-700 text-slate-400'
-                            : 'hover:bg-slate-200 text-slate-600'
+                            ? 'bg-slate-800/50 hover:bg-slate-800'
+                            : 'bg-white hover:bg-slate-100'
                         }`}
                       >
-                        <Copy size={16} />
-                      </motion.button>
-                    </motion.div>
-                  ))}
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-300 ${
+                            isDark ? 'text-slate-500' : 'text-slate-600'
+                          }`}>
+                            {truncateUrl(originalUrl, 35)}
+                          </p>
+                          <p className={`text-sm font-mono break-all ${
+                            isDark ? 'text-indigo-400' : 'text-indigo-600'
+                          }`}>
+                            {displayUrl}
+                          </p>
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            reliableCopy(displayUrl)
+                            toast.success('Copied!')
+                          }}
+                          className={`p-2 rounded-lg transition-colors duration-200 ml-2 shrink-0 ${
+                            isDark
+                              ? 'hover:bg-slate-700 text-slate-400'
+                              : 'hover:bg-slate-200 text-slate-600'
+                          }`}
+                        >
+                          <Copy size={16} />
+                        </motion.button>
+                      </motion.div>
+                    )
+                  })}
                 </div>
               </motion.div>
             )}
