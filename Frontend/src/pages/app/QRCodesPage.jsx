@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import { reliableCopy } from '../../utils/helpers/clipboard'
 import { motion } from 'framer-motion'
 import QRCode from 'qrcode'
+import { SHORT_BASE_URL } from '../../utils/constants'
 
 const QRCodesPage = () => {
   const { isDark } = useTheme()
@@ -29,7 +30,20 @@ const QRCodesPage = () => {
   const fetchLinks = async () => {
     try {
       const response = await urlService.getUserLinks()
-      setLinks(response.data || [])
+      const linksData = response.data || []
+      
+      // Ensure each link has shortUrl constructed from shortId
+      const transformedLinks = linksData.map(link => {
+        if (!link.shortUrl && link.shortId) {
+          return {
+            ...link,
+            shortUrl: `${SHORT_BASE_URL}/${link.shortId}`
+          }
+        }
+        return link
+      })
+      
+      setLinks(transformedLinks)
     } catch (error) {
       console.error('Error fetching links:', error)
       toast.error('Failed to fetch links')

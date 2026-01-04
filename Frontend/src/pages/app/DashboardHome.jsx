@@ -5,6 +5,7 @@ import { urlService } from '../../services/url.service'
 import { toast } from 'react-toastify'
 import { reliableCopy } from '../../utils/helpers/clipboard'
 import { motion } from 'framer-motion'
+import { SHORT_BASE_URL } from '../../utils/constants'
 
 const DashboardHome = () => {
   const { isDark } = useTheme()
@@ -30,18 +31,29 @@ const DashboardHome = () => {
       const response = await urlService.getUserLinks()
       const links = response.data || []
       
+      // Ensure each link has shortUrl constructed from shortId
+      const transformedLinks = links.map(link => {
+        if (!link.shortUrl && link.shortId) {
+          return {
+            ...link,
+            shortUrl: `${SHORT_BASE_URL}/${link.shortId}`
+          }
+        }
+        return link
+      })
+      
       // Calculate stats
-      const totalClicks = links.reduce((sum, link) => sum + (link.clicks || 0), 0)
-      const activeLinks = links.filter(link => !link.disabled).length
+      const totalClicks = transformedLinks.reduce((sum, link) => sum + (link.clicks || 0), 0)
+      const activeLinks = transformedLinks.filter(link => !link.disabled).length
       
       setStats({
-        totalLinks: links.length,
+        totalLinks: transformedLinks.length,
         totalClicks,
         activeLinks,
         qrScans: 0 // Will be calculated from QR analytics
       })
       
-      setRecentLinks(links.slice(0, 5))
+      setRecentLinks(transformedLinks.slice(0, 5))
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
       toast.error('Failed to load dashboard data')

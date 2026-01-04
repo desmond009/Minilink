@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import { reliableCopy } from '../../utils/helpers/clipboard'
 import { motion } from 'framer-motion'
 import { format } from 'date-fns'
+import { SHORT_BASE_URL } from '../../utils/constants'
 
 const LinksPage = () => {
   const { isDark } = useTheme()
@@ -23,7 +24,20 @@ const LinksPage = () => {
   const fetchLinks = async () => {
     try {
       const response = await urlService.getUserLinks()
-      setLinks(response.data || [])
+      const linksData = response.data || []
+      
+      // Ensure each link has a shortUrl constructed from shortId
+      const transformedLinks = linksData.map(link => {
+        if (!link.shortUrl && link.shortId) {
+          return {
+            ...link,
+            shortUrl: `${SHORT_BASE_URL}/${link.shortId}`
+          }
+        }
+        return link
+      })
+      
+      setLinks(transformedLinks)
     } catch (error) {
       console.error('Error fetching links:', error)
       toast.error('Failed to fetch links')
@@ -201,22 +215,29 @@ const LinksPage = () => {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
-                        <a
-                          href={link.shortUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`font-medium hover:underline ${
-                            isDark ? 'text-blue-400' : 'text-blue-600'
-                          }`}
-                        >
-                          {link.shortUrl}
-                        </a>
-                        <button
-                          onClick={() => reliableCopy(link.shortUrl)}
-                          className="p-1 hover:bg-gray-700 rounded"
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
+                        {(() => {
+                          const displayUrl = link.shortUrl || `${SHORT_BASE_URL}/${link.shortId}`
+                          return (
+                            <>
+                              <a
+                                href={displayUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`font-medium hover:underline ${
+                                  isDark ? 'text-blue-400' : 'text-blue-600'
+                                }`}
+                              >
+                                {displayUrl}
+                              </a>
+                              <button
+                                onClick={() => reliableCopy(displayUrl)}
+                                className="p-1 hover:bg-gray-700 rounded"
+                              >
+                                <Copy className="w-4 h-4" />
+                              </button>
+                            </>
+                          )
+                        })()}
                       </div>
                     </td>
                     <td className="px-6 py-4">

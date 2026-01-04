@@ -5,6 +5,7 @@ import { urlService } from '../../services/url.service'
 import { toast } from 'react-toastify'
 import { motion } from 'framer-motion'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { SHORT_BASE_URL } from '../../utils/constants'
 
 const AnalyticsPage = () => {
   const { isDark } = useTheme()
@@ -19,7 +20,20 @@ const AnalyticsPage = () => {
   const fetchAnalytics = async () => {
     try {
       const response = await urlService.getUserLinks()
-      setLinks(response.data || [])
+      const linksData = response.data || []
+      
+      // Ensure each link has shortUrl constructed from shortId
+      const transformedLinks = linksData.map(link => {
+        if (!link.shortUrl && link.shortId) {
+          return {
+            ...link,
+            shortUrl: `${SHORT_BASE_URL}/${link.shortId}`
+          }
+        }
+        return link
+      })
+      
+      setLinks(transformedLinks)
     } catch (error) {
       console.error('Error fetching analytics:', error)
       toast.error('Failed to fetch analytics')
